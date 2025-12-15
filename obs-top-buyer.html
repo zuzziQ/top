@@ -5,45 +5,69 @@
 <title>Top Buyers</title>
 <style>
   body {
-    margin: 0;
-    background: transparent;
-    font-family: Arial, sans-serif;
-    color: #fff;
-  }
+  margin: 0;
+  background: transparent;
+  font-family: Arial, sans-serif;
+  color: #fff;
+}
 
-  .box {
-    width: 500px;
-    background: rgba(0,0,0,0.6);
-    border-radius: 12px;
-    padding: 15px;
-  }
+.box {
+  width: 520px;
+  background: #777;
+  border-radius: 16px;
+  padding: 16px;
+}
 
-  h2 {
-    text-align: center;
-    margin: 0 0 10px;
-    font-size: 22px;
-  }
+h2 {
+  text-align: center;
+  margin: 0 0 14px;
+  font-size: 22px;
+  font-weight: bold;
+}
 
-  .item {
-    display: flex;
-    justify-content: space-between;
-    padding: 8px 10px;
-    margin-bottom: 6px;
-    border-radius: 8px;
-    background: rgba(255,255,255,0.1);
-    animation: fadeIn 0.6s ease;
-  }
+.item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 14px;
+  margin-bottom: 8px;
+  border-radius: 12px;
+  background: rgba(255,255,255,0.15);
+  font-size: 16px;
+}
 
-  .item.top1 {
-    background: linear-gradient(90deg, gold, orange);
-    color: #000;
-    font-weight: bold;
-  }
+/* 🥇 TOP 1 */
+.item.top1 {
+  background: linear-gradient(90deg, #FFD700, #FFC107);
+  color: #000;
+  font-size: 20px;
+  font-weight: 800;
+  box-shadow: 0 0 15px rgba(255,215,0,0.9);
+  transform: scale(1.04);
+}
 
-  @keyframes fadeIn {
-    from { opacity: 0; transform: translateY(10px); }
-    to { opacity: 1; transform: translateY(0); }
-  }
+/* 🥈 TOP 2 */
+.item.top2 {
+  background: linear-gradient(90deg, #C0C0C0, #B0B0B0);
+  color: #000;
+  font-weight: 700;
+}
+
+/* 🥉 TOP 3 */
+.item.top3 {
+  background: linear-gradient(90deg, #CD7F32, #B87333);
+  color: #000;
+  font-weight: 600;
+}
+
+.rank {
+  font-weight: bold;
+  margin-right: 8px;
+}
+
+.amount {
+  font-weight: bold;
+}
 </style>
 </head>
 
@@ -69,17 +93,31 @@ async function loadData() {
 
   data.forEach((item, i) => {
     const div = document.createElement("div");
-    div.className = "item" + (i === 0 ? " top1" : "");
+
+    let cls = "item";
+    if (i === 0) cls += " top1";
+    else if (i === 1) cls += " top2";
+    else if (i === 2) cls += " top3";
+
+    div.className = cls;
+
+    const medal =
+      i === 0 ? "🥇" :
+      i === 1 ? "🥈" :
+      i === 2 ? "🥉" : `${i+1}.`;
+
     div.innerHTML = `
-      <span>${i+1}. ${item.name}</span>
-      <span>${formatMoney(item.amount)}</span>
+      <span class="rank">${medal} ${item.name}</span>
+      <span class="amount">${formatMoney(item.amount)}</span>
     `;
+
     list.appendChild(div);
   });
 }
 
 loadData();
-setInterval(loadData, 10000); // refresh mỗi 10 giây
+setInterval(loadData, 10000);
 </script>
 </body>
 </html>
+
