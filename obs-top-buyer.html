@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<title>Top Buyers</title>
+<style>
+  body {
+    margin: 0;
+    background: transparent;
+    font-family: Arial, sans-serif;
+    color: #fff;
+  }
+
+  .box {
+    width: 500px;
+    background: rgba(0,0,0,0.6);
+    border-radius: 12px;
+    padding: 15px;
+  }
+
+  h2 {
+    text-align: center;
+    margin: 0 0 10px;
+    font-size: 22px;
+  }
+
+  .item {
+    display: flex;
+    justify-content: space-between;
+    padding: 8px 10px;
+    margin-bottom: 6px;
+    border-radius: 8px;
+    background: rgba(255,255,255,0.1);
+    animation: fadeIn 0.6s ease;
+  }
+
+  .item.top1 {
+    background: linear-gradient(90deg, gold, orange);
+    color: #000;
+    font-weight: bold;
+  }
+
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+</style>
+</head>
+
+<body>
+  <div class="box">
+    <h2>🏆 TOP KHÁCH HÀNG</h2>
+    <div id="list"></div>
+  </div>
+
+<script>
+const API_URL = "https://script.google.com/macros/s/AKfycbyMINgfDrWH2mzg1DbjkUL6LmRbWTma6Ry8Fa-kzyY1KMheQT0_Qp0X0Khj2Uix2NXP/exec";
+
+function formatMoney(n) {
+  return n.toLocaleString("vi-VN") + " ₫";
+}
+
+async function loadData() {
+  const res = await fetch(API_URL);
+  const data = await res.json();
+
+  const list = document.getElementById("list");
+  list.innerHTML = "";
+
+  data.forEach((item, i) => {
+    const div = document.createElement("div");
+    div.className = "item" + (i === 0 ? " top1" : "");
+    div.innerHTML = `
+      <span>${i+1}. ${item.name}</span>
+      <span>${formatMoney(item.amount)}</span>
+    `;
+    list.appendChild(div);
+  });
+}
+
+loadData();
+setInterval(loadData, 10000); // refresh mỗi 10 giây
+</script>
+</body>
+</html>
