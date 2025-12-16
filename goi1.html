@@ -17,8 +17,7 @@ body {
   width: 700px;
 }
 
-/* ===== MEDALS ===== */
-
+/* MEDALS */
 .medal {
   width: 56px;
   height: 56px;
@@ -31,12 +30,11 @@ body {
   margin-right: 14px;
 }
 
-.gold { background: #e53935; }   /* RED for #1 */
+.gold { background: #e53935; }
 .silver { background: #cfd8dc; color: #000; }
 .bronze { background: #e0a96d; color: #000; }
 
-/* ===== PODIUM ===== */
-
+/* PODIUM */
 .top1 {
   background: linear-gradient(135deg, #e53935, #ff6f60);
   border-radius: 22px;
@@ -46,20 +44,10 @@ body {
   align-items: center;
   justify-content: center;
   gap: 14px;
-  text-align: center;
 }
 
-.top1 .name {
-  font-size: 40px;
-  font-weight: 800;
-}
-
-.top1 .time {
-  font-size: 22px;
-  font-weight: 700;
-}
-
-/* ===== TOP 2 & 3 ===== */
+.top1 .name { font-size: 40px; font-weight: 800; }
+.top1 .time { font-size: 22px; }
 
 .row23 {
   display: flex;
@@ -77,44 +65,14 @@ body {
   align-items: center;
   justify-content: center;
   gap: 12px;
-  text-align: center;
 }
 
-.top2 .name,
-.top3 .name {
-  font-size: 26px;
-  font-weight: 700;
-}
-
-.top2 .time,
-.top3 .time {
-  font-size: 18px;
-}
-
-/* ===== OTHERS (4+) ===== */
-
-.list {
-  margin-top: 8px;
-}
-
+/* LIST */
 .item {
   display: flex;
-  align-items: center;
   justify-content: space-between;
   font-size: 24px;
   margin-bottom: 6px;
-}
-
-.left {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-}
-
-.rank {
-  width: 32px;
-  font-weight: 700;
-  opacity: 0.9;
 }
 </style>
 </head>
@@ -124,44 +82,34 @@ body {
 
 <script>
 const API =
-  "https://script.google.com/macros/s/AKfycbwgkMXvIQ7jmDtoc4TGya_5BTA8fbin4rmQMGWVeK-tVLMfo3gjdbAlyi79CaHwuMmW/exec?type=orders&t=";
-
-const GOI = "Gói 1";
-
-function fmtTime(ms) {
-  return new Date(ms).toLocaleTimeString("vi-VN", {
-    hour: "2-digit",
-    minute: "2-digit",
-    second: "2-digit"
-  });
-}
+  "https://script.google.com/macros/s/AKfycbwgkMXvIQ7jmDtoc4TGya_5BTA8fbin4rmQMGWVeK-tVLMfo3gjdbAlyi79CaHwuMmW/exec";
 
 async function load() {
-  const res = await fetch(API + Date.now());
+  const res = await fetch(API + "?t=" + Date.now());
   const json = await res.json();
-  const data = (json[GOI] || []).slice();
 
-  // Rank ONLY by time
-  data.sort((a, b) => a.time - b.time);
+  // ✅ FILTER ONLY GÓI 1
+  const data = json
+    .filter(r => r.goi === "Gói 1")
+    .sort((a, b) => a.time.localeCompare(b.time));
 
   const root = document.getElementById("root");
   root.innerHTML = "";
 
   if (!data.length) return;
 
-  /* 🥇 TOP 1 */
-  const t1 = data[0];
+  /* TOP 1 */
   root.innerHTML += `
     <div class="top1">
       <div class="medal gold">1</div>
       <div>
-        <div class="name">${t1.name}</div>
-        <div class="time">${fmtTime(t1.time)}</div>
+        <div class="name">${data[0].name}</div>
+        <div class="time">${data[0].time}</div>
       </div>
     </div>
   `;
 
-  /* 🥈🥉 TOP 2 & 3 */
+  /* TOP 2 & 3 */
   if (data[1] || data[2]) {
     let html = `<div class="row23">`;
 
@@ -170,8 +118,8 @@ async function load() {
         <div class="top2">
           <div class="medal silver">2</div>
           <div>
-            <div class="name">${data[1].name}</div>
-            <div class="time">${fmtTime(data[1].time)}</div>
+            <div>${data[1].name}</div>
+            <div>${data[1].time}</div>
           </div>
         </div>`;
     }
@@ -181,8 +129,8 @@ async function load() {
         <div class="top3">
           <div class="medal bronze">3</div>
           <div>
-            <div class="name">${data[2].name}</div>
-            <div class="time">${fmtTime(data[2].time)}</div>
+            <div>${data[2].name}</div>
+            <div>${data[2].time}</div>
           </div>
         </div>`;
     }
@@ -191,23 +139,15 @@ async function load() {
     root.innerHTML += html;
   }
 
-  /* 4+ LIST (ALWAYS SHOW) */
-  if (data.length > 3) {
-    let list = `<div class="list">`;
-    data.slice(3).forEach((u, i) => {
-      list += `
-        <div class="item">
-          <div class="left">
-            <div class="rank">${i + 4}</div>
-            <div>${u.name}</div>
-          </div>
-          <div>${fmtTime(u.time)}</div>
-        </div>
-      `;
-    });
-    list += `</div>`;
-    root.innerHTML += list;
-  }
+  /* 4+ */
+  data.slice(3).forEach((u, i) => {
+    root.innerHTML += `
+      <div class="item">
+        <span>${i + 4}. ${u.name}</span>
+        <span>${u.time}</span>
+      </div>
+    `;
+  });
 }
 
 load();
