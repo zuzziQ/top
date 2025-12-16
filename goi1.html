@@ -4,7 +4,7 @@
 <meta charset="utf-8" />
 
 <style>
-@import url('https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@500;700&display=swap');
 
 body {
   margin: 0;
@@ -15,28 +15,39 @@ body {
 
 .box {
   width: 700px;
-  padding: 16px;
+  padding: 12px;
 }
 
-.item {
-  font-size: 28px;
+.row {
   display: flex;
   justify-content: space-between;
+  align-items: center;
+  font-size: 30px;
   margin-bottom: 6px;
-  opacity: 0.85;
+  opacity: 0.8;
 }
 
-.highlight {
-  font-size: 34px;
+.rank {
+  width: 36px;
   font-weight: 700;
-  opacity: 1;
-  color: #ffd700;
-  text-shadow: 0 0 12px rgba(255,215,0,0.9);
+}
+
+.name {
+  flex: 1;
+  padding-left: 8px;
 }
 
 .amount {
-  min-width: 140px;
+  min-width: 160px;
   text-align: right;
+}
+
+.top {
+  font-size: 36px;
+  font-weight: 700;
+  opacity: 1;
+  color: #ffd700;
+  text-shadow: 0 0 14px rgba(255,215,0,0.9);
 }
 </style>
 </head>
@@ -45,35 +56,45 @@ body {
 <div class="box" id="list"></div>
 
 <script>
-const API_URL =
+const API =
   "https://script.google.com/macros/s/AKfycbwgkMXvIQ7jmDtoc4TGya_5BTA8fbin4rmQMGWVeK-tVLMfo3gjdbAlyi79CaHwuMmW/exec?type=orders&t=";
 
-const GOI_NAME = "Gói 1";
-const HIGHLIGHT_COUNT = 3;
+const GOI = "Gói 1";
+const TOP_COUNT = 3;
+
+let lastHash = "";
+
+function hash(data) {
+  return JSON.stringify(data.map(x => x.time));
+}
 
 async function load() {
-  const res = await fetch(API_URL + Date.now());
-  const data = await res.json();
+  const res = await fetch(API + Date.now());
+  const json = await res.json();
+  const data = (json[GOI] || []).slice();
 
-  const list = document.getElementById("list");
-  list.innerHTML = "";
+  // 🔥 RANK BY TIME ONLY
+  data.sort((a, b) => a.time - b.time);
 
-  const rows = data[GOI_NAME] || [];
+  const h = hash(data);
+  if (h === lastHash) return;
+  lastHash = h;
 
-  rows.forEach((item, i) => {
+  const box = document.getElementById("list");
+  box.innerHTML = "";
+
+  data.forEach((u, i) => {
     const div = document.createElement("div");
-    div.className = "item";
-
-    if (i < HIGHLIGHT_COUNT) {
-      div.classList.add("highlight");
-    }
+    div.className = "row";
+    if (i < TOP_COUNT) div.classList.add("top");
 
     div.innerHTML = `
-      <span>${i + 1}. ${item.name}</span>
-      <span class="amount">${item.amount.toLocaleString("vi-VN")}đ</span>
+      <div class="rank">${i + 1}</div>
+      <div class="name">${u.name}</div>
+      <div class="amount">${u.amount.toLocaleString("vi-VN")}đ</div>
     `;
 
-    list.appendChild(div);
+    box.appendChild(div);
   });
 }
 
