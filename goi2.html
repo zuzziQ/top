@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8" />
+<title>Gói Overlay</title>
+
+<style>
+body {
+  margin: 0;
+  background: transparent;
+  font-family: Arial, Helvetica, sans-serif;
+  color: #fff;
+
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+}
+
+.box {
+  width: 700px;
+  box-sizing: border-box;
+}
+
+.goi-title {
+  font-size: 26px;
+  font-weight: 900;
+  margin-bottom: 8px;
+}
+
+.item {
+  display: grid;
+  grid-template-columns: 50px 1fr 170px;
+  align-items: center;
+
+  padding: 14px 16px;
+  margin-bottom: 8px;
+
+  border-radius: 12px;
+  background: rgba(0,0,0,.45);
+
+  font-size: 24px;
+}
+
+.rank {
+  font-weight: 900;
+  text-align: center;
+}
+
+.name {
+  font-weight: 800;
+}
+
+.amount {
+  text-align: right;
+  font-weight: 900;
+}
+
+/* VIP */
+.vip .item {
+  background: linear-gradient(
+    90deg,
+    rgba(255,196,0,.55),
+    rgba(0,0,0,.45)
+  );
+}
+</style>
+</head>
+
+<body>
+
+<div class="box" id="root"></div>
+
+<script>
+/* 🔴 CONFIG */
+const API_URL = "https://script.google.com/macros/s/AKfycbx6KFfDKdVIzMKCt9M9edMAsaDGn_H5u89yQaouF8WY3jC-aTZx4kH5QyWfbDuWLwDC/exec";
+const GOI_NAME = "Gói 2"; // CHANGE
+const IS_VIP = false;     // true only for Gói 1
+
+function formatMoney(n) {
+  return n.toLocaleString("vi-VN") + " ₫";
+}
+
+async function loadData() {
+  const res = await fetch(API_URL);
+  const data = await res.json();
+  const list = data[GOI_NAME] || [];
+
+  render(list);
+}
+
+function render(list) {
+  const root = document.getElementById("root");
+  root.innerHTML = "";
+
+  if (!list.length) return;
+
+  const title = document.createElement("div");
+  title.className = "goi-title";
+  title.textContent = GOI_NAME;
+  root.appendChild(title);
+
+  root.classList.toggle("vip", IS_VIP);
+
+  list.forEach((u, i) => {
+    const row = document.createElement("div");
+    row.className = "item";
+
+    row.innerHTML = `
+      <div class="rank">${IS_VIP ? i + 1 : "🏆"}</div>
+      <div class="name">${u.name}</div>
+      <div class="amount">${formatMoney(u.amount)}</div>
+    `;
+
+    root.appendChild(row);
+  });
+}
+
+loadData();
+setInterval(loadData, 10000);
+</script>
+
+</body>
+</html>
