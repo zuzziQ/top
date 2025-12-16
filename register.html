@@ -59,8 +59,8 @@ h2 {
 <script>
 const API_URL = "https://script.google.com/macros/s/AKfycbyMINgfDrWH2mzg1DbjkUL6LmRbWTma6Ry8Fa-kzyY1KMheQT0_Qp0X0Khj2Uix2NXP/exec";
 
-function formatTime(ts) {
-  const d = new Date(ts);
+function formatTime(ms) {
+  const d = new Date(ms);
   return d.toLocaleTimeString("vi-VN", {
     hour: "2-digit",
     minute: "2-digit",
@@ -75,7 +75,7 @@ async function loadData() {
   const list = document.getElementById("list");
   list.innerHTML = "";
 
-  data.forEach((u, i) => {
+  data.forEach(u => {
     const div = document.createElement("div");
     div.className = "item";
 
@@ -94,6 +94,7 @@ setInterval(loadData, 10000);
 </script>
 </body>
 </html>
+
 
 
 
