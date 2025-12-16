@@ -23,13 +23,20 @@ h2 {
 }
 
 .item {
-  display: flex;
-  justify-content: space-between;
+  display: grid;
+  grid-template-columns: 90px 1fr 80px;
+  gap: 10px;
   padding: 8px 12px;
   margin-bottom: 6px;
   border-radius: 8px;
   background: rgba(0,0,0,0.45);
   font-size: 15px;
+  align-items: center;
+}
+
+.time {
+  opacity: 0.85;
+  font-size: 13px;
 }
 
 .name {
@@ -37,7 +44,8 @@ h2 {
 }
 
 .goi {
-  opacity: 0.85;
+  text-align: right;
+  opacity: 0.9;
 }
 </style>
 </head>
@@ -51,6 +59,15 @@ h2 {
 <script>
 const API_URL = "https://script.google.com/macros/s/AKfycbyMINgfDrWH2mzg1DbjkUL6LmRbWTma6Ry8Fa-kzyY1KMheQT0_Qp0X0Khj2Uix2NXP/exec";
 
+function formatTime(ts) {
+  const d = new Date(ts);
+  return d.toLocaleTimeString("vi-VN", {
+    hour: "2-digit",
+    minute: "2-digit",
+    second: "2-digit"
+  });
+}
+
 async function loadData() {
   const res = await fetch(API_URL);
   const data = await res.json();
@@ -63,7 +80,8 @@ async function loadData() {
     div.className = "item";
 
     div.innerHTML = `
-      <span class="name">${i + 1}. ${u.name}</span>
+      <span class="time">${formatTime(u.timestamp)}</span>
+      <span class="name">${u.name}</span>
       <span class="goi">${u.goi}</span>
     `;
 
@@ -76,6 +94,7 @@ setInterval(loadData, 10000);
 </script>
 </body>
 </html>
+
 
 
 
