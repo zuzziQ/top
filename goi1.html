@@ -17,38 +17,40 @@ body {
   width: 700px;
 }
 
-/* ===== MEDAL ===== */
+/* ===== MEDALS ===== */
 
 .medal {
-  width: 42px;
-  height: 42px;
+  width: 56px;
+  height: 56px;
   border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
   font-weight: 800;
-  font-size: 20px;
-  margin-right: 12px;
+  font-size: 28px;
+  margin-right: 14px;
 }
 
-.gold { background: #ffd700; color: #000; }
+.gold { background: #e53935; }   /* RED for #1 */
 .silver { background: #cfd8dc; color: #000; }
 .bronze { background: #e0a96d; color: #000; }
 
-/* ===== TOP 1 ===== */
+/* ===== PODIUM ===== */
 
 .top1 {
-  background: linear-gradient(135deg, #ffd700, #ffb700);
-  color: #000;
-  border-radius: 20px;
-  padding: 18px;
-  margin-bottom: 14px;
+  background: linear-gradient(135deg, #e53935, #ff6f60);
+  border-radius: 22px;
+  padding: 20px;
+  margin-bottom: 16px;
   display: flex;
   align-items: center;
+  justify-content: center;
+  gap: 14px;
+  text-align: center;
 }
 
 .top1 .name {
-  font-size: 38px;
+  font-size: 40px;
   font-weight: 800;
 }
 
@@ -61,43 +63,58 @@ body {
 
 .row23 {
   display: flex;
-  gap: 12px;
-  margin-bottom: 14px;
+  justify-content: center;
+  gap: 14px;
+  margin-bottom: 16px;
 }
 
 .top2, .top3 {
-  flex: 1;
-  background: rgba(255,255,255,0.15);
-  border-radius: 16px;
-  padding: 14px;
+  width: 48%;
+  background: rgba(255,255,255,0.18);
+  border-radius: 18px;
+  padding: 16px;
   display: flex;
   align-items: center;
+  justify-content: center;
+  gap: 12px;
+  text-align: center;
 }
 
 .top2 .name,
 .top3 .name {
-  font-size: 24px;
+  font-size: 26px;
   font-weight: 700;
 }
 
 .top2 .time,
 .top3 .time {
   font-size: 18px;
-  opacity: 0.9;
 }
 
-/* ===== OTHER LIST ===== */
+/* ===== OTHERS (4+) ===== */
 
 .list {
-  margin-top: 6px;
+  margin-top: 8px;
 }
 
 .item {
   display: flex;
+  align-items: center;
   justify-content: space-between;
-  font-size: 22px;
-  opacity: 0.85;
+  font-size: 24px;
   margin-bottom: 6px;
+}
+
+.left {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.rank {
+  width: 32px;
+  font-weight: 700;
+  opacity: 0.9;
 }
 </style>
 </head>
@@ -124,6 +141,7 @@ async function load() {
   const json = await res.json();
   const data = (json[GOI] || []).slice();
 
+  // Rank ONLY by time
   data.sort((a, b) => a.time - b.time);
 
   const root = document.getElementById("root");
@@ -173,14 +191,17 @@ async function load() {
     root.innerHTML += html;
   }
 
-  /* OTHERS */
+  /* 4+ LIST (ALWAYS SHOW) */
   if (data.length > 3) {
     let list = `<div class="list">`;
-    data.slice(3).forEach(u => {
+    data.slice(3).forEach((u, i) => {
       list += `
         <div class="item">
-          <span>${u.name}</span>
-          <span>${fmtTime(u.time)}</span>
+          <div class="left">
+            <div class="rank">${i + 4}</div>
+            <div>${u.name}</div>
+          </div>
+          <div>${fmtTime(u.time)}</div>
         </div>
       `;
     });
