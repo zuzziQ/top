@@ -68,15 +68,31 @@ body {
   margin-bottom: 16px;
 }
 
-.top2, .top3 {
+.top2 {
   width: 48%;
-  background: rgba(255,255,255,0.18);
+  background: linear-gradient(135deg, #90caf9, #42a5f5);
   border-radius: 18px;
   padding: 16px;
   display: flex;
   align-items: center;
   justify-content: center;
   gap: 12px;
+}
+
+.top3 {
+  width: 48%;
+  background: linear-gradient(135deg, #ffcc80, #fb8c00);
+  border-radius: 18px;
+  padding: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+}
+  
+.top2 div, .top3 div {
+  font-size: 22px;
+  font-weight: 600;
 }
 
 /* LIST */
@@ -113,17 +129,14 @@ async function load() {
   /* TOP 1 */
   root.innerHTML += `
     <div class="top1">
-      <div class="medal gold">1</div>
-  
-      <!-- 👑 PUT CROWN HERE -->
       <div class="crown">👑</div>
-  
       <div>
         <div class="name">${data[0].name}</div>
         <div class="time">${data[0].time}</div>
       </div>
     </div>
   `;
+
 
 
   /* TOP 2 & 3 */
