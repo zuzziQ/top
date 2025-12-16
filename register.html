@@ -5,14 +5,14 @@
 <title>Newest Registrations</title>
 
 <style>
-/* ===== RESET & OBS TRANSPARENT ===== */
+/* ===== OBS TRANSPARENT BASE ===== */
 body {
   margin: 0;
   background: transparent;
   font-family: Arial, Helvetica, sans-serif;
   color: #fff;
 
-  /* Center box in OBS frame */
+  /* TOP ALIGN (IMPORTANT) */
   display: flex;
   justify-content: center;
   align-items: flex-start;
@@ -20,53 +20,54 @@ body {
 
 /* ===== MAIN CONTAINER ===== */
 .box {
-  width: 100%;           /* FILL OBS WIDTH */
-  max-width: 700px;      /* OBS Browser width */
+  width: 100%;
+  max-width: 700px;
   box-sizing: border-box;
+  padding-top: 10px;
 }
 
 /* ===== TITLE ===== */
 h2 {
-  margin: 0 0 14px 0;
-  font-size: 26px;
-  font-weight: 700;
+  margin: 0 0 18px 0;
+  font-size: 32px;      /* ⬅️ BIGGER */
+  font-weight: 800;
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 12px;
 }
 
 /* ===== ROW ITEM ===== */
 .item {
   width: 100%;
   display: grid;
-  grid-template-columns: 90px 1fr 90px;
+  grid-template-columns: 110px 1fr 110px; /* wider columns */
+
   align-items: center;
+  padding: 16px 18px;
+  margin-bottom: 10px;
 
-  padding: 12px 16px;
-  margin-bottom: 8px;
-
-  border-radius: 10px;
+  border-radius: 12px;
   background: rgba(0, 0, 0, 0.45);
 
-  font-size: 18px;
+  font-size: 22px;      /* ⬅️ BIGGER */
   box-sizing: border-box;
 }
 
 /* ===== COLUMNS ===== */
 .time {
-  font-size: 15px;
-  opacity: 0.85;
+  font-size: 18px;      /* ⬅️ BIGGER */
+  opacity: 0.9;
 }
 
 .name {
-  font-size: 18px;
-  font-weight: 700;
+  font-size: 22px;
+  font-weight: 800;
 }
 
 .goi {
-  font-size: 16px;
+  font-size: 20px;
   text-align: right;
-  opacity: 0.9;
+  opacity: 0.95;
 }
 </style>
 </head>
@@ -102,14 +103,13 @@ async function loadData() {
 
       list.appendChild(div);
     });
-
-  } catch (err) {
-    console.error("Load error:", err);
+  } catch (e) {
+    console.error(e);
   }
 }
 
 loadData();
-setInterval(loadData, 10000); // refresh every 10s
+setInterval(loadData, 10000);
 </script>
 
 </body>
