@@ -1,37 +1,61 @@
 <!DOCTYPE html>
-<html lang="vi">
+<html lang="en">
 <head>
-<meta charset="UTF-8">
-<title>Đăng ký mua gói</title>
+<meta charset="UTF-8" />
+<title>Newest Registrations</title>
+
 <style>
+/* ===== RESET & OBS TRANSPARENT ===== */
 body {
   margin: 0;
   background: transparent;
+  font-family: Arial, Helvetica, sans-serif;
+  color: #fff;
+
+  /* Center box in OBS frame */
   display: flex;
   justify-content: center;
   align-items: flex-start;
 }
 
+/* ===== MAIN CONTAINER ===== */
 .box {
-  width: 100%;
-  max-width: 700px;
-  background: transparent;
-}
-
-h2 {
-  font-size: 26px;
-  margin-bottom: 14px;
-}
-
-.item {
-  font-size: 18px;
-  padding: 12px 16px;
-  width: 100%;
+  width: 100%;           /* FILL OBS WIDTH */
+  max-width: 700px;      /* OBS Browser width */
   box-sizing: border-box;
 }
 
+/* ===== TITLE ===== */
+h2 {
+  margin: 0 0 14px 0;
+  font-size: 26px;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+/* ===== ROW ITEM ===== */
+.item {
+  width: 100%;
+  display: grid;
+  grid-template-columns: 90px 1fr 90px;
+  align-items: center;
+
+  padding: 12px 16px;
+  margin-bottom: 8px;
+
+  border-radius: 10px;
+  background: rgba(0, 0, 0, 0.45);
+
+  font-size: 18px;
+  box-sizing: border-box;
+}
+
+/* ===== COLUMNS ===== */
 .time {
   font-size: 15px;
+  opacity: 0.85;
 }
 
 .name {
@@ -41,29 +65,6 @@ h2 {
 
 .goi {
   font-size: 16px;
-}
-
-.item {
-  display: grid;
-  grid-template-columns: 80px 1fr 80px;
-  padding: 8px 12px;
-  margin-bottom: 6px;
-  border-radius: 8px;
-  background: rgba(0,0,0,0.45);
-  font-size: 15px;
-  align-items: center;
-}
-
-.time {
-  font-size: 13px;
-  opacity: 0.85;
-}
-
-.name {
-  font-weight: 600;
-}
-
-.goi {
   text-align: right;
   opacity: 0.9;
 }
@@ -71,46 +72,45 @@ h2 {
 </head>
 
 <body>
-  <div class="box">
-    <h2>🏆 Đăng ký mua gói</h2>
-    <div id="list"></div>
-  </div>
+
+<div class="box">
+  <h2>🆕 Đăng ký mua gói</h2>
+  <div id="list"></div>
+</div>
 
 <script>
+/* 🔴 PUT YOUR APPS SCRIPT URL HERE */
 const API_URL = "https://script.google.com/macros/s/AKfycbz1IrhE0bwA1xTJg1todVmHUJJqLWVmS8GX6fW0mTEDEo5PUW2duA3cc5mcb1F_iLVi/exec";
 
 async function loadData() {
-  const res = await fetch(API_URL);
-  const data = await res.json();
+  try {
+    const res = await fetch(API_URL);
+    const data = await res.json();
 
-  const list = document.getElementById("list");
-  list.innerHTML = "";
+    const list = document.getElementById("list");
+    list.innerHTML = "";
 
-  data.forEach(u => {
-    const div = document.createElement("div");
-    div.className = "item";
+    data.forEach(u => {
+      const div = document.createElement("div");
+      div.className = "item";
 
-    div.innerHTML = `
-      <span class="time">${u.time}</span>
-      <span class="name">${u.name}</span>
-      <span class="goi">${u.goi}</span>
-    `;
+      div.innerHTML = `
+        <span class="time">${u.time}</span>
+        <span class="name">${u.name}</span>
+        <span class="goi">${u.goi}</span>
+      `;
 
-    list.appendChild(div);
-  });
+      list.appendChild(div);
+    });
+
+  } catch (err) {
+    console.error("Load error:", err);
+  }
 }
 
 loadData();
-setInterval(loadData, 10000);
+setInterval(loadData, 10000); // refresh every 10s
 </script>
+
 </body>
 </html>
-
-
-
-
-
-
-
-
-
