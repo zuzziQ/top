@@ -45,6 +45,18 @@ body {
   justify-content: center;
   gap: 14px;
 }
+.crown {
+  font-size: 48px;
+  line-height: 1;
+  margin-right: 6px;
+  animation: crownFloat 1.4s ease-in-out infinite;
+}
+
+@keyframes crownFloat {
+  0%   { transform: translateY(0) scale(1); }
+  50%  { transform: translateY(-8px) scale(1.05); }
+  100% { transform: translateY(0) scale(1); }
+}
 
 .top1 .name { font-size: 40px; font-weight: 800; }
 .top1 .time { font-size: 22px; }
@@ -102,12 +114,17 @@ async function load() {
   root.innerHTML += `
     <div class="top1">
       <div class="medal gold">1</div>
+  
+      <!-- 👑 PUT CROWN HERE -->
+      <div class="crown">👑</div>
+  
       <div>
         <div class="name">${data[0].name}</div>
         <div class="time">${data[0].time}</div>
       </div>
     </div>
   `;
+
 
   /* TOP 2 & 3 */
   if (data[1] || data[2]) {
