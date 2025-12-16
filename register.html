@@ -24,8 +24,7 @@ h2 {
 
 .item {
   display: grid;
-  grid-template-columns: 90px 1fr 80px;
-  gap: 10px;
+  grid-template-columns: 80px 1fr 80px;
   padding: 8px 12px;
   margin-bottom: 6px;
   border-radius: 8px;
@@ -35,8 +34,8 @@ h2 {
 }
 
 .time {
-  opacity: 0.85;
   font-size: 13px;
+  opacity: 0.85;
 }
 
 .name {
@@ -57,16 +56,7 @@ h2 {
   </div>
 
 <script>
-const API_URL = "https://script.google.com/macros/s/AKfycbyMINgfDrWH2mzg1DbjkUL6LmRbWTma6Ry8Fa-kzyY1KMheQT0_Qp0X0Khj2Uix2NXP/exec";
-
-function formatTime(ms) {
-  const d = new Date(ms);
-  return d.toLocaleTimeString("vi-VN", {
-    hour: "2-digit",
-    minute: "2-digit",
-    second: "2-digit"
-  });
-}
+const API_URL = "https://script.google.com/macros/s/AKfycbz1IrhE0bwA1xTJg1todVmHUJJqLWVmS8GX6fW0mTEDEo5PUW2duA3cc5mcb1F_iLVi/exec";
 
 async function loadData() {
   const res = await fetch(API_URL);
@@ -80,7 +70,7 @@ async function loadData() {
     div.className = "item";
 
     div.innerHTML = `
-      <span class="time">${formatTime(u.timestamp)}</span>
+      <span class="time">${u.time}</span>
       <span class="name">${u.name}</span>
       <span class="goi">${u.goi}</span>
     `;
@@ -94,6 +84,7 @@ setInterval(loadData, 10000);
 </script>
 </body>
 </html>
+
 
 
 
