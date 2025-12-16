@@ -1,123 +1,108 @@
 <!DOCTYPE html>
 <html lang="vi">
 <head>
-<meta charset="UTF-8" />
-<title>Gói Overlay</title>
+<meta charset="utf-8" />
 
 <style>
+@import url('https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@500;700;800&display=swap');
+
 body {
   margin: 0;
   background: transparent;
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: 'Be Vietnam Pro', sans-serif;
   color: #fff;
-
-  display: flex;
-  justify-content: center;
-  align-items: flex-start;
 }
 
-.box {
+.container {
   width: 700px;
-  box-sizing: border-box;
 }
 
-.goi-title {
-  font-size: 26px;
-  font-weight: 900;
-  margin-bottom: 8px;
-}
-
-.item {
-  display: grid;
-  grid-template-columns: 50px 1fr 170px;
+/* TOP 1 */
+.top1 {
+  background: linear-gradient(135deg, #e53935, #ff6f60);
+  border-radius: 22px;
+  padding: 20px;
+  margin-bottom: 16px;
+  display: flex;
   align-items: center;
-
-  padding: 14px 16px;
-  margin-bottom: 8px;
-
-  border-radius: 12px;
-  background: rgba(0,0,0,.45);
-
-  font-size: 24px;
+  gap: 14px;
+  filter: saturate(0.9);
 }
 
-.rank {
-  font-weight: 900;
-  text-align: center;
+
+.crown {
+  font-size: 36px;
+  line-height: 1;
 }
 
-.name {
+.top1 .name {
+  font-size: 32px;
   font-weight: 800;
 }
 
-.amount {
-  text-align: right;
-  font-weight: 900;
+.top1 .time {
+  font-size: 20px;
+  opacity: 0.9;
 }
 
-/* VIP */
-.vip .item {
-  background: linear-gradient(
-    90deg,
-    rgba(255,196,0,.55),
-    rgba(0,0,0,.45)
-  );
+/* LIST */
+.item {
+  display: flex;
+  justify-content: space-between;
+  font-size: 22px;
+  margin-bottom: 6px;
+  opacity: 0.85;
 }
 </style>
 </head>
 
 <body>
-
-<div class="box" id="root"></div>
+<div class="container" id="root"></div>
 
 <script>
-/* 🔴 CONFIG */
-const API_URL = "https://script.google.com/macros/s/AKfycbxk7jR1DkLF5sudc4v5N5kkgOtag61VFsD0eWhOaBW6IEM3ItcY-jha7vZ-S8nkPmgy/exec";
-const GOI_NAME = "Gói 4"; // CHANGE
-const IS_VIP = false;     // true only for Gói 1
+const API =
+  "https://script.google.com/macros/s/AKfycbwgkMXvIQ7jmDtoc4TGya_5BTA8fbin4rmQMGWVeK-tVLMfo3gjdbAlyi79CaHwuMmW/exec";
 
-function formatMoney(n) {
-  return n.toLocaleString("vi-VN") + " ₫";
-}
+// 🔴 CHANGE THIS FOR EACH FILE
+const GOI_NAME = "Gói 4"; // "Gói 3" / "Gói 4"
 
-async function loadData() {
-  const res = await fetch(API_URL);
-  const data = await res.json();
-  const list = data[GOI_NAME] || [];
+async function load() {
+  const res = await fetch(API + "?t=" + Date.now());
+  const json = await res.json();
 
-  render(list);
-}
+  const data = json
+    .filter(r => r.goi === GOI_NAME)
+    .sort((a, b) => a.time.localeCompare(b.time));
 
-function render(list) {
   const root = document.getElementById("root");
   root.innerHTML = "";
 
-  if (!list.length) return;
+  if (!data.length) return;
 
-  const title = document.createElement("div");
-  title.className = "goi-title";
-  title.textContent = GOI_NAME;
-  root.appendChild(title);
+  /* TOP 1 */
+  root.innerHTML += `
+    <div class="top1">
+      <div class="crown">👑</div>
+      <div>
+        <div class="name">${data[0].name}</div>
+        <div class="time">${data[0].time}</div>
+      </div>
+    </div>
+  `;
 
-  root.classList.toggle("vip", IS_VIP);
-
-  list.forEach((u, i) => {
-    const row = document.createElement("div");
-    row.className = "item";
-
-    row.innerHTML = `
-      <div class="rank">${IS_VIP ? i + 1 : "🏆"}</div>
-      <div class="name">${u.name}</div>
-      <div class="amount">${formatMoney(u.amount)}</div>
+  /* REST */
+  data.slice(1).forEach((u, i) => {
+    root.innerHTML += `
+      <div class="item">
+        <span>${i + 2}. ${u.name}</span>
+        <span>${u.time}</span>
+      </div>
     `;
-
-    root.appendChild(row);
   });
 }
 
-loadData();
-setInterval(loadData, 10000);
+load();
+setInterval(load, 3000);
 </script>
-
 </body>
 </html>
