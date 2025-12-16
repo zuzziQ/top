@@ -1,104 +1,3 @@
-<!DOCTYPE html>
-<html lang="vi">
-<head>
-<meta charset="utf-8" />
-
-<style>
-@import url('https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@500;700;800&display=swap');
-
-body {
-  margin: 0;
-  background: transparent;
-  font-family: 'Be Vietnam Pro', sans-serif;
-  color: #fff;
-}
-
-.container {
-  width: 700px;
-}
-
-/* ===== TOP 1 ===== */
-.top1 {
-  background: linear-gradient(135deg, #e53935, #ff6f60);
-  border-radius: 22px;
-  padding: 20px;
-  margin-bottom: 16px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 14px;
-}
-
-.crown {
-  font-size: 48px;
-  line-height: 1;
-}
-
-.top1 .name {
-  font-size: 40px;
-  font-weight: 800;
-}
-
-.top1 .time {
-  font-size: 22px;
-}
-
-/* ===== TOP 2 & 3 ===== */
-.row23 {
-  display: flex;
-  justify-content: center;
-  gap: 14px;
-  margin-bottom: 16px;
-}
-
-.top2 {
-  width: 48%;
-  background: linear-gradient(135deg, #90caf9, #42a5f5);
-  border-radius: 18px;
-  padding: 16px;
-  display: flex;
-  align-items: center;
-  gap: 12px;
-}
-
-.top3 {
-  width: 48%;
-  background: linear-gradient(135deg, #ffcc80, #fb8c00);
-  border-radius: 18px;
-  padding: 16px;
-  display: flex;
-  align-items: center;
-  gap: 12px;
-}
-
-.medal {
-  width: 52px;
-  height: 52px;
-  border-radius: 50%;
-  font-size: 26px;
-  font-weight: 800;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.silver { background: #cfd8dc; color: #000; }
-.bronze { background: #e0a96d; color: #000; }
-
-/* ===== LIST ===== */
-.item {
-  display: flex;
-  justify-content: space-between;
-  font-size: 24px;
-  margin-bottom: 6px;
-  opacity: 0.9;
-}
-</style>
-</head>
-
-<body>
-<div class="container" id="root"></div>
-
 <script>
 const API =
   "https://script.google.com/macros/s/AKfycbwgkMXvIQ7jmDtoc4TGya_5BTA8fbin4rmQMGWVeK-tVLMfo3gjdbAlyi79CaHwuMmW/exec";
@@ -107,50 +6,55 @@ async function load() {
   const res = await fetch(API + "?t=" + Date.now());
   const data = await res.json();
 
-  // ✅ Sort newest first (timestamp column A already formatted)
+  // ✅ Sort newest → oldest (time string HH:mm:ss is safe same-day)
   const sorted = data
     .slice()
     .sort((a, b) => b.time.localeCompare(a.time));
+
+  const top3 = sorted.slice(0, 3);
+  const rest = sorted.slice(3);
 
   const root = document.getElementById("root");
   root.innerHTML = "";
 
   if (!sorted.length) return;
 
-  /* TOP 1 */
-  root.innerHTML += `
-    <div class="top1">
-      <div class="crown">👑</div>
-      <div>
-        <div class="name">${sorted[0].name}</div>
-        <div class="time">${sorted[0].time}</div>
+  /* ===== TOP 1 ===== */
+  if (top3[0]) {
+    root.innerHTML += `
+      <div class="top1">
+        <div class="crown">👑</div>
+        <div>
+          <div class="name">${top3[0].name}</div>
+          <div class="time">${top3[0].time}</div>
+        </div>
       </div>
-    </div>
-  `;
+    `;
+  }
 
-  /* TOP 2 & 3 */
-  if (sorted[1] || sorted[2]) {
+  /* ===== TOP 2 & 3 ===== */
+  if (top3[1] || top3[2]) {
     let html = `<div class="row23">`;
 
-    if (sorted[1]) {
+    if (top3[1]) {
       html += `
         <div class="top2">
           <div class="medal silver">2</div>
           <div>
-            <div>${sorted[1].name}</div>
-            <div>${sorted[1].time}</div>
+            <div>${top3[1].name}</div>
+            <div>${top3[1].time}</div>
           </div>
         </div>
       `;
     }
 
-    if (sorted[2]) {
+    if (top3[2]) {
       html += `
         <div class="top3">
           <div class="medal bronze">3</div>
           <div>
-            <div>${sorted[2].name}</div>
-            <div>${sorted[2].time}</div>
+            <div>${top3[2].name}</div>
+            <div>${top3[2].time}</div>
           </div>
         </div>
       `;
@@ -160,11 +64,11 @@ async function load() {
     root.innerHTML += html;
   }
 
-  /* REST (4+) */
-  sorted.slice(3).forEach((u, i) => {
+  /* ===== REST (newest → oldest, NO NUMBERING) ===== */
+  rest.forEach(u => {
     root.innerHTML += `
       <div class="item">
-        <span>${i + 4}. ${u.name}</span>
+        <span>${u.name}</span>
         <span>${u.time}</span>
       </div>
     `;
@@ -174,5 +78,3 @@ async function load() {
 load();
 setInterval(load, 3000);
 </script>
-</body>
-</html>
