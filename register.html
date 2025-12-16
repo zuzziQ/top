@@ -6,18 +6,14 @@ async function load() {
   const res = await fetch(API + "?t=" + Date.now());
   const data = await res.json();
 
-  // ✅ Sort newest → oldest (time string HH:mm:ss is safe same-day)
-  const sorted = data
-    .slice()
-    .sort((a, b) => b.time.localeCompare(a.time));
-
-  const top3 = sorted.slice(0, 3);
-  const rest = sorted.slice(3);
-
   const root = document.getElementById("root");
   root.innerHTML = "";
 
-  if (!sorted.length) return;
+  if (!Array.isArray(data) || data.length === 0) return;
+
+  // ✅ API already newest → oldest
+  const top3 = data.slice(0, 3);
+  const rest = data.slice(3);
 
   /* ===== TOP 1 ===== */
   if (top3[0]) {
@@ -64,7 +60,7 @@ async function load() {
     root.innerHTML += html;
   }
 
-  /* ===== REST (newest → oldest, NO NUMBERING) ===== */
+  /* ===== REST (NO NUMBER, STILL NEWEST) ===== */
   rest.forEach(u => {
     root.innerHTML += `
       <div class="item">
