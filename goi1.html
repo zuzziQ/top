@@ -4,7 +4,7 @@
 <meta charset="utf-8" />
 
 <style>
-@import url('https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@500;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@500;700;800&display=swap');
 
 body {
   margin: 0;
@@ -22,9 +22,9 @@ body {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  font-size: 30px;
   margin-bottom: 6px;
-  opacity: 0.8;
+  opacity: 0.85;
+  font-size: 26px;
 }
 
 .rank {
@@ -42,12 +42,31 @@ body {
   text-align: right;
 }
 
-.top {
-  font-size: 36px;
-  font-weight: 700;
-  opacity: 1;
+/* 🥇 TOP 1 */
+.top1 {
+  font-size: 38px;
+  font-weight: 800;
   color: #ffd700;
-  text-shadow: 0 0 14px rgba(255,215,0,0.9);
+  text-shadow: 0 0 18px rgba(255,215,0,1);
+  opacity: 1;
+}
+
+/* 🥈 TOP 2 */
+.top2 {
+  font-size: 32px;
+  font-weight: 700;
+  color: #ffe066;
+  text-shadow: 0 0 10px rgba(255,224,102,0.8);
+  opacity: 1;
+}
+
+/* 🥉 TOP 3 */
+.top3 {
+  font-size: 28px;
+  font-weight: 700;
+  color: #fff1a8;
+  text-shadow: 0 0 6px rgba(255,241,168,0.7);
+  opacity: 1;
 }
 </style>
 </head>
@@ -60,25 +79,14 @@ const API =
   "https://script.google.com/macros/s/AKfycbwgkMXvIQ7jmDtoc4TGya_5BTA8fbin4rmQMGWVeK-tVLMfo3gjdbAlyi79CaHwuMmW/exec?type=orders&t=";
 
 const GOI = "Gói 1";
-const TOP_COUNT = 3;
-
-let lastHash = "";
-
-function hash(data) {
-  return JSON.stringify(data.map(x => x.time));
-}
 
 async function load() {
   const res = await fetch(API + Date.now());
   const json = await res.json();
   const data = (json[GOI] || []).slice();
 
-  // 🔥 RANK BY TIME ONLY
+  // 🔥 Rank ONLY by time
   data.sort((a, b) => a.time - b.time);
-
-  const h = hash(data);
-  if (h === lastHash) return;
-  lastHash = h;
 
   const box = document.getElementById("list");
   box.innerHTML = "";
@@ -86,7 +94,10 @@ async function load() {
   data.forEach((u, i) => {
     const div = document.createElement("div");
     div.className = "row";
-    if (i < TOP_COUNT) div.classList.add("top");
+
+    if (i === 0) div.classList.add("top1");
+    else if (i === 1) div.classList.add("top2");
+    else if (i === 2) div.classList.add("top3");
 
     div.innerHTML = `
       <div class="rank">${i + 1}</div>
