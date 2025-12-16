@@ -1,123 +1,151 @@
 <!DOCTYPE html>
 <html lang="vi">
 <head>
-<meta charset="UTF-8" />
-<title>Gói Overlay</title>
- 
+<meta charset="utf-8" />
+<title>Gói 1 VIP</title>
+
 <style>
+@import url('https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;600;700&display=swap');
+
 body {
   margin: 0;
   background: transparent;
-  font-family: Arial, Helvetica, sans-serif;
-  color: #fff;
-
-  display: flex;
-  justify-content: center;
-  align-items: flex-start;
+  font-family: 'Be Vietnam Pro', sans-serif;
+  font-variant-ligatures: none;
 }
 
 .box {
   width: 700px;
-  box-sizing: border-box;
-}
-
-.goi-title {
-  font-size: 26px;
-  font-weight: 900;
-  margin-bottom: 8px;
+  padding: 16px;
 }
 
 .item {
-  display: grid;
-  grid-template-columns: 50px 1fr 170px;
+  font-size: 38px;
+  font-weight: 700;
+  margin-bottom: 14px;
+  display: flex;
+  justify-content: space-between;
   align-items: center;
-
-  padding: 14px 16px;
-  margin-bottom: 8px;
-
-  border-radius: 12px;
-  background: rgba(0,0,0,.45);
-
-  font-size: 24px;
+  opacity: 0;
+  transform: translateY(10px);
+  animation: fadeIn 0.5s forwards;
 }
 
 .rank {
-  font-weight: 900;
-  text-align: center;
-}
-
-.name {
-  font-weight: 800;
+  margin-right: 8px;
+  color: #ffd700;
 }
 
 .amount {
+  color: #ffd700;
+  min-width: 180px;
   text-align: right;
-  font-weight: 900;
 }
 
-/* VIP */
-.vip .item {
-  background: linear-gradient(
-    90deg,
-    rgba(255,196,0,.55),
-    rgba(0,0,0,.45)
-  );
+/* 🔥 Glow when changed */
+.glow {
+  animation: glow 1.2s ease-in-out infinite alternate;
+}
+
+@keyframes glow {
+  from {
+    text-shadow: 0 0 8px #ffd700;
+  }
+  to {
+    text-shadow: 0 0 20px #ffd700, 0 0 30px #ffea00;
+  }
+}
+
+@keyframes fadeIn {
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 </style>
 </head>
 
 <body>
+<div class="box" id="list"></div>
 
-<div class="box" id="root"></div>
+<!-- 🔊 Sound -->
+<audio id="sound">
+  <source src="https://assets.mixkit.co/sfx/preview/mixkit-achievement-bell-600.mp3" type="audio/mpeg">
+</audio>
 
 <script>
-/* 🔴 CONFIG */
-const API_URL = "https://script.google.com/macros/s/AKfycbxk7jR1DkLF5sudc4v5N5kkgOtag61VFsD0eWhOaBW6IEM3ItcY-jha7vZ-S8nkPmgy/exec";
-const GOI_NAME = "Gói 1"; // CHANGE
-const IS_VIP = true;     // true only for Gói 1
+const API_URL =
+  "https://script.google.com/macros/s/AKfycbwgkMXvIQ7jmDtoc4TGya_5BTA8fbin4rmQMGWVeK-tVLMfo3gjdbAlyi79CaHwuMmW/exec?type=orders&t=";
+
+const GOI_NAME = "Gói 1";
+const MAX_ITEMS = 3;
+const REFRESH_MS = 3000;
+
+let lastDataHash = "";
 
 function formatMoney(n) {
-  return n.toLocaleString("vi-VN") + " ₫";
+  return n.toLocaleString("vi-VN") + "đ";
+}
+
+/* 🔢 Count-up animation */
+function animateNumber(el, start, end, duration = 800) {
+  const startTime = performance.now();
+
+  function update(now) {
+    const progress = Math.min((now - startTime) / duration, 1);
+    const value = Math.floor(start + (end - start) * progress);
+    el.textContent = formatMoney(value);
+    if (progress < 1) requestAnimationFrame(update);
+  }
+
+  requestAnimationFrame(update);
 }
 
 async function loadData() {
-  const res = await fetch(API_URL);
-  const data = await res.json();
-  const list = data[GOI_NAME] || [];
+  try {
+    const res = await fetch(API_URL + Date.now()); // cache-busting
+    const json = await res.json();
 
-  render(list);
-}
+    const list = document.getElementById("list");
+    const data = json[GOI_NAME] || [];
 
-function render(list) {
-  const root = document.getElementById("root");
-  root.innerHTML = "";
+    const hash = JSON.stringify(data);
+    const changed = hash !== lastDataHash;
+    lastDataHash = hash;
 
-  if (!list.length) return;
+    if (!changed) return;
 
-  const title = document.createElement("div");
-  title.className = "goi-title";
-  title.textContent = GOI_NAME;
-  root.appendChild(title);
+    list.innerHTML = "";
 
-  root.classList.toggle("vip", IS_VIP);
+    if (changed && data.length > 0) {
+      document.getElementById("sound").play().catch(() => {});
+    }
 
-  list.forEach((u, i) => {
-    const row = document.createElement("div");
-    row.className = "item";
+    data.slice(0, MAX_ITEMS).forEach((item, i) => {
+      const row = document.createElement("div");
+      row.className = "item glow";
 
-    row.innerHTML = `
-      <div class="rank">${IS_VIP ? i + 1 : "🏆"}</div>
-      <div class="name">${u.name}</div>
-      <div class="amount">${formatMoney(u.amount)}</div>
-    `;
+      const name = document.createElement("span");
+      name.innerHTML = `<span class="rank">${i + 1}.</span>${item.name}`;
 
-    root.appendChild(row);
-  });
+      const amount = document.createElement("span");
+      amount.className = "amount";
+      amount.textContent = "0đ";
+
+      row.appendChild(name);
+      row.appendChild(amount);
+      list.appendChild(row);
+
+      animateNumber(amount, 0, item.amount);
+    });
+
+  } catch (err) {
+    console.error(err);
+  }
 }
 
 loadData();
-setInterval(loadData, 10000);
+setInterval(loadData, REFRESH_MS);
 </script>
-
 </body>
 </html>
