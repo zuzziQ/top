@@ -107,55 +107,61 @@ async function load() {
   const res = await fetch(API + "?t=" + Date.now());
   const data = await res.json();
 
-  // ✅ Sort newest → oldest (time string HH:mm:ss is safe same-day)
-  const sorted = data
-    .slice()
-    .sort((a, b) => b.time.localeCompare(a.time));
+  if (!data.length) return;
 
-  const top3 = sorted.slice(0, 3);
-  const rest = sorted.slice(3);
+  /* 1️⃣ OLDEST → NEWEST */
+  const oldestSorted = data
+    .slice()
+    .sort((a, b) => a.time.localeCompare(b.time));
+
+  /* 2️⃣ PIN FIRST 3 */
+  const pinned = oldestSorted.slice(0, 3);
+
+  /* 3️⃣ REST */
+  const rest = oldestSorted.slice(3);
+
+  /* 4️⃣ REST: NEWEST → OLDEST */
+  rest.sort((a, b) => b.time.localeCompare(a.time));
 
   const root = document.getElementById("root");
   root.innerHTML = "";
 
-  if (!sorted.length) return;
-
-  /* ===== TOP 1 ===== */
-  if (top3[0]) {
+  /* ===== PINNED TOP 1 ===== */
+  if (pinned[0]) {
     root.innerHTML += `
       <div class="top1">
         <div class="crown">👑</div>
         <div>
-          <div class="name">${top3[0].name}</div>
-          <div class="time">${top3[0].time}</div>
+          <div class="name">${pinned[0].name}</div>
+          <div class="time">${pinned[0].time}</div>
         </div>
       </div>
     `;
   }
 
-  /* ===== TOP 2 & 3 ===== */
-  if (top3[1] || top3[2]) {
+  /* ===== PINNED TOP 2 & 3 ===== */
+  if (pinned[1] || pinned[2]) {
     let html = `<div class="row23">`;
 
-    if (top3[1]) {
+    if (pinned[1]) {
       html += `
         <div class="top2">
           <div class="medal silver">2</div>
           <div>
-            <div>${top3[1].name}</div>
-            <div>${top3[1].time}</div>
+            <div>${pinned[1].name}</div>
+            <div>${pinned[1].time}</div>
           </div>
         </div>
       `;
     }
 
-    if (top3[2]) {
+    if (pinned[2]) {
       html += `
         <div class="top3">
           <div class="medal bronze">3</div>
           <div>
-            <div>${top3[2].name}</div>
-            <div>${top3[2].time}</div>
+            <div>${pinned[2].name}</div>
+            <div>${pinned[2].time}</div>
           </div>
         </div>
       `;
@@ -165,7 +171,7 @@ async function load() {
     root.innerHTML += html;
   }
 
-  /* ===== REST (newest → oldest, NO NUMBERING) ===== */
+  /* ===== REST (NEWEST FIRST, NO NUMBER) ===== */
   rest.forEach(u => {
     root.innerHTML += `
       <div class="item">
@@ -179,5 +185,7 @@ async function load() {
 load();
 setInterval(load, 3000);
 </script>
+
 </body>
 </html>
+
