@@ -17,29 +17,43 @@ body {
   width: 700px;
 }
 
-/* ===== PODIUM ===== */
+/* ===== MEDAL ===== */
+
+.medal {
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 800;
+  font-size: 20px;
+  margin-right: 12px;
+}
+
+.gold { background: #ffd700; color: #000; }
+.silver { background: #cfd8dc; color: #000; }
+.bronze { background: #e0a96d; color: #000; }
+
+/* ===== TOP 1 ===== */
 
 .top1 {
   background: linear-gradient(135deg, #ffd700, #ffb700);
   color: #000;
   border-radius: 20px;
-  padding: 20px;
+  padding: 18px;
   margin-bottom: 14px;
-  text-align: center;
-}
-
-.top1 .rank {
-  font-size: 20px;
-  font-weight: 700;
+  display: flex;
+  align-items: center;
 }
 
 .top1 .name {
-  font-size: 40px;
+  font-size: 38px;
   font-weight: 800;
 }
 
-.top1 .amount {
-  font-size: 28px;
+.top1 .time {
+  font-size: 22px;
   font-weight: 700;
 }
 
@@ -56,21 +70,23 @@ body {
   background: rgba(255,255,255,0.15);
   border-radius: 16px;
   padding: 14px;
-  text-align: center;
+  display: flex;
+  align-items: center;
 }
 
 .top2 .name,
 .top3 .name {
-  font-size: 26px;
+  font-size: 24px;
   font-weight: 700;
 }
 
-.top2 .amount,
-.top3 .amount {
-  font-size: 20px;
+.top2 .time,
+.top3 .time {
+  font-size: 18px;
+  opacity: 0.9;
 }
 
-/* ===== REST LIST ===== */
+/* ===== OTHER LIST ===== */
 
 .list {
   margin-top: 6px;
@@ -95,12 +111,19 @@ const API =
 
 const GOI = "Gói 1";
 
+function fmtTime(ms) {
+  return new Date(ms).toLocaleTimeString("vi-VN", {
+    hour: "2-digit",
+    minute: "2-digit",
+    second: "2-digit"
+  });
+}
+
 async function load() {
   const res = await fetch(API + Date.now());
   const json = await res.json();
   const data = (json[GOI] || []).slice();
 
-  // Rank by time ONLY
   data.sort((a, b) => a.time - b.time);
 
   const root = document.getElementById("root");
@@ -112,9 +135,11 @@ async function load() {
   const t1 = data[0];
   root.innerHTML += `
     <div class="top1">
-      <div class="rank">TOP 1</div>
-      <div class="name">${t1.name}</div>
-      <div class="amount">${t1.amount.toLocaleString("vi-VN")}đ</div>
+      <div class="medal gold">1</div>
+      <div>
+        <div class="name">${t1.name}</div>
+        <div class="time">${fmtTime(t1.time)}</div>
+      </div>
     </div>
   `;
 
@@ -125,16 +150,22 @@ async function load() {
     if (data[1]) {
       html += `
         <div class="top2">
-          <div class="name">${data[1].name}</div>
-          <div class="amount">${data[1].amount.toLocaleString("vi-VN")}đ</div>
+          <div class="medal silver">2</div>
+          <div>
+            <div class="name">${data[1].name}</div>
+            <div class="time">${fmtTime(data[1].time)}</div>
+          </div>
         </div>`;
     }
 
     if (data[2]) {
       html += `
         <div class="top3">
-          <div class="name">${data[2].name}</div>
-          <div class="amount">${data[2].amount.toLocaleString("vi-VN")}đ</div>
+          <div class="medal bronze">3</div>
+          <div>
+            <div class="name">${data[2].name}</div>
+            <div class="time">${fmtTime(data[2].time)}</div>
+          </div>
         </div>`;
     }
 
@@ -142,14 +173,14 @@ async function load() {
     root.innerHTML += html;
   }
 
-  /* REST */
+  /* OTHERS */
   if (data.length > 3) {
     let list = `<div class="list">`;
-    data.slice(3).forEach((u, i) => {
+    data.slice(3).forEach(u => {
       list += `
         <div class="item">
-          <span>${i + 4}. ${u.name}</span>
-          <span>${u.amount.toLocaleString("vi-VN")}đ</span>
+          <span>${u.name}</span>
+          <span>${fmtTime(u.time)}</span>
         </div>
       `;
     });
