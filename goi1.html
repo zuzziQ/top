@@ -4,222 +4,180 @@
 <meta charset="utf-8" />
 
 <style>
-@import url('https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@600;700;800&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@500;700;800&display=swap');
 
-html, body {
+body {
   margin: 0;
-  width: 1920px;
-  height: 1080px;
   background: transparent;
   font-family: 'Be Vietnam Pro', sans-serif;
   color: #fff;
-  overflow: hidden;
 }
 
-.stage {
-  position: relative;
-  width: 100%;
-  height: 100%;
+.container {
+  width: 700px;
 }
 
-/* ================= PODIUM ================= */
-.podium {
-  position: absolute;
-  top: 220px;
-  left: 50%;
-  transform: translateX(-50%);
-  width: 1000px;
-  height: 360px;
-}
-
-/* TOP 1 */
-.top1 {
-  position: absolute;
-  left: 50%;
-  transform: translateX(-50%);
-  text-align: center;
-}
-
-.top1 .crown {
-  font-size: 80px;
-  margin-bottom: 6px;
-}
-
-.top1 .card {
-  display: inline-flex;
-  align-items: center;
-  gap: 14px;
-  background: #3b3b3b;
-  padding: 14px 22px;
-  border-radius: 14px;
-}
-
-.rank {
-  width: 54px;
-  height: 54px;
-  border-radius: 10px;
-  background: #555;
+/* MEDALS */
+.medal {
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 30px;
   font-weight: 800;
+  font-size: 28px;
+  margin-right: 14px;
 }
 
-.name {
-  font-size: 22px;
-  font-weight: 700;
-}
+.gold { background: #e53935; }
+.silver { background: #cfd8dc; color: #000; }
+.bronze { background: #e0a96d; color: #000; }
 
-.time {
-  font-size: 18px;
-  opacity: 0.9;
-}
-
-/* TOP 2 + 3 */
-.top2, .top3 {
-  position: absolute;
-  top: 120px;
-  text-align: center;
-}
-
-.top2 { left: 0; }
-.top3 { right: 0; }
-
-.small-crown {
-  font-size: 42px;
-  opacity: 0.8;
-  margin-bottom: 4px;
-}
-
-.small-card {
-  display: inline-flex;
+/* PODIUM */
+.top1 {
+  background: linear-gradient(135deg, #e53935, #ff6f60);
+  border-radius: 22px;
+  padding: 20px;
+  margin-bottom: 16px;
+  display: flex;
   align-items: center;
+  justify-content: center;
+  gap: 14px;
+}
+.crown {
+  font-size: 48px;
+  line-height: 1;
+  margin-right: 6px;
+  animation: crownFloat 1.4s ease-in-out infinite;
+}
+
+@keyframes crownFloat {
+  0%   { transform: translateY(0) scale(1); }
+  50%  { transform: translateY(-8px) scale(1.05); }
+  100% { transform: translateY(0) scale(1); }
+}
+
+.top1 .name { font-size: 40px; font-weight: 800; }
+.top1 .time { font-size: 22px; }
+
+.row23 {
+  display: flex;
+  justify-content: center;
+  gap: 14px;
+  margin-bottom: 16px;
+}
+
+.top2 {
+  width: 48%;
+  background: linear-gradient(135deg, #90caf9, #42a5f5);
+  border-radius: 18px;
+  padding: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   gap: 12px;
-  background: #2f2f2f;
-  padding: 10px 18px;
-  border-radius: 12px;
 }
 
-/* ================= LIST ================= */
-.list {
-  position: absolute;
-  top: 650px;
-  left: 50%;
-  transform: translateX(-50%);
-  width: 1000px;
+.top3 {
+  width: 48%;
+  background: linear-gradient(135deg, #ffcc80, #fb8c00);
+  border-radius: 18px;
+  padding: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+}
+  
+.top2 div, .top3 div {
+  font-size: 22px;
+  font-weight: 600;
 }
 
-.header, .row {
-  display: grid;
-  grid-template-columns: 80px 1fr 200px 200px;
-  padding: 6px 0;
-}
-
-.header {
-  font-size: 16px;
-  opacity: 0.7;
+/* LIST */
+.item {
+  display: flex;
+  justify-content: space-between;
+  font-size: 24px;
   margin-bottom: 6px;
-}
-
-.row {
-  font-size: 18px;
 }
 </style>
 </head>
 
 <body>
-<div class="stage">
-  <div class="podium" id="podium"></div>
-  <div class="list" id="list"></div>
-</div>
+<div class="container" id="root"></div>
 
 <script>
 const API =
-  "https://script.google.com/macros/s/AKfycbyRGQUeRDYjMrNAr6xwqQybpQ5BA3LJ_b0ccY_m_kvgC29v_l0K7B6PE5X8pBEvaGeV/exec";
+  "https://script.google.com/macros/s/AKfycbwgkMXvIQ7jmDtoc4TGya_5BTA8fbin4rmQMGWVeK-tVLMfo3gjdbAlyi79CaHwuMmW/exec";
 
 async function load() {
-  const res = await fetch(API + "?type=orders&t=" + Date.now());
+  const res = await fetch(API + "?t=" + Date.now());
   const json = await res.json();
 
-  const data = json["Gói 1"] || [];
+  // ✅ FILTER ONLY GÓI 1
+  const data = json
+    .filter(r => r.goi === "Gói 1")
+    .sort((a, b) => a.time.localeCompare(b.time));
+
+  const root = document.getElementById("root");
+  root.innerHTML = "";
+
   if (!data.length) return;
 
-  const podium = document.getElementById("podium");
-  const list = document.getElementById("list");
-
-  podium.innerHTML = "";
-  list.innerHTML = "";
-
   /* TOP 1 */
-  if (data[0]) {
-    podium.innerHTML += `
-      <div class="top1">
-        <div class="crown">👑</div>
-        <div class="card">
-          <div class="rank">1</div>
-          <div>
-            <div class="name">${data[0].name}</div>
-            <div class="time">⏱ ${fmt(data[0].time)}</div>
-          </div>
-        </div>
-      </div>`;
-  }
+  root.innerHTML += `
+    <div class="top1">
+      <div class="crown">👑</div>
+      <div>
+        <div class="name">${data[0].name}</div>
+        <div class="time">${data[0].time}</div>
+      </div>
+    </div>
+  `;
 
-  /* TOP 2 */
-  if (data[1]) {
-    podium.innerHTML += `
-      <div class="top2">
-        <div class="small-crown">👑</div>
-        <div class="small-card">
-          <div class="rank">2</div>
-          <div>
-            <div class="name">${data[1].name}</div>
-            <div class="time">⏱ ${fmt(data[1].time)}</div>
-          </div>
-        </div>
-      </div>`;
-  }
 
-  /* TOP 3 */
-  if (data[2]) {
-    podium.innerHTML += `
-      <div class="top3">
-        <div class="small-crown">👑</div>
-        <div class="small-card">
-          <div class="rank">3</div>
-          <div>
-            <div class="name">${data[2].name}</div>
-            <div class="time">⏱ ${fmt(data[2].time)}</div>
-          </div>
-        </div>
-      </div>`;
-  }
 
-  /* LIST HEADER */
-  list.innerHTML += `
-    <div class="header">
-      <div>HẠNG</div>
-      <div>HỌ VÀ TÊN</div>
-      <div>THỜI GIAN CHỐT</div>
-      <div>THỜI GIAN ĐĂNG KÝ</div>
-    </div>`;
+  /* TOP 2 & 3 */
+  if (data[1] || data[2]) {
+    let html = `<div class="row23">`;
+
+    if (data[1]) {
+      html += `
+        <div class="top2">
+          <div class="medal silver">2</div>
+          <div>
+            <div>${data[1].name}</div>
+            <div>${data[1].time}</div>
+          </div>
+        </div>`;
+    }
+
+    if (data[2]) {
+      html += `
+        <div class="top3">
+          <div class="medal bronze">3</div>
+          <div>
+            <div>${data[2].name}</div>
+            <div>${data[2].time}</div>
+          </div>
+        </div>`;
+    }
+
+    html += `</div>`;
+    root.innerHTML += html;
+  }
 
   /* 4+ */
   data.slice(3).forEach((u, i) => {
-    list.innerHTML += `
-      <div class="row">
-        <div>${i + 4}</div>
-        <div>${u.name}</div>
-        <div>${fmt(u.time)}</div>
-        <div>${fmt(u.time)}</div>
-      </div>`;
+    root.innerHTML += `
+      <div class="item">
+        <span>${i + 4}. ${u.name}</span>
+        <span>${u.time}</span>
+      </div>
+    `;
   });
-}
-
-function fmt(ms) {
-  const d = new Date(ms);
-  return d.toLocaleTimeString("vi-VN", { hour12: false });
 }
 
 load();
