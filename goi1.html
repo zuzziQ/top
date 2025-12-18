@@ -79,8 +79,79 @@ body {
 <div id="vip"></div>
 
 <script>
-// 🔹 KEEP YOUR EXISTING GOI 1 API LOGIC HERE
-// Just render into #vip
+const API =
+  "https://script.google.com/macros/s/AKfycbwgkMXvIQ7jmDtoc4TGya_5BTA8fbin4rmQMGWVeK-tVLMfo3gjdbAlyi79CaHwuMmW/exec";
+
+async function load() {
+  const res = await fetch(API + "?t=" + Date.now());
+  const json = await res.json();
+
+  // ✅ FILTER ONLY GÓI 1
+  const data = json
+    .filter(r => r.goi === "Gói 1")
+    .sort((a, b) => a.time.localeCompare(b.time));
+
+  const root = document.getElementById("root");
+  root.innerHTML = "";
+
+  if (!data.length) return;
+
+  /* TOP 1 */
+  root.innerHTML += `
+    <div class="top1">
+      <div class="crown">👑</div>
+      <div>
+        <div class="name">${data[0].name}</div>
+        <div class="time">${data[0].time}</div>
+      </div>
+    </div>
+  `;
+
+
+
+  /* TOP 2 & 3 */
+  if (data[1] || data[2]) {
+    let html = `<div class="row23">`;
+
+    if (data[1]) {
+      html += `
+        <div class="top2">
+          <div class="medal silver">2</div>
+          <div>
+            <div>${data[1].name}</div>
+            <div>${data[1].time}</div>
+          </div>
+        </div>`;
+    }
+
+    if (data[2]) {
+      html += `
+        <div class="top3">
+          <div class="medal bronze">3</div>
+          <div>
+            <div>${data[2].name}</div>
+            <div>${data[2].time}</div>
+          </div>
+        </div>`;
+    }
+
+    html += `</div>`;
+    root.innerHTML += html;
+  }
+
+  /* 4+ */
+  data.slice(3).forEach((u, i) => {
+    root.innerHTML += `
+      <div class="item">
+        <span>${i + 4}. ${u.name}</span>
+        <span>${u.time}</span>
+      </div>
+    `;
+  });
+}
+
+load();
+setInterval(load, 3000);
 </script>
 </body>
 </html>
