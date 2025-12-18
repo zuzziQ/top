@@ -5,153 +5,105 @@
 <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@600;800&display=swap" rel="stylesheet">
 
 <style>
-body {
-  font-family: 'Be Vietnam Pro', sans-serif;
-  color: #fff;
+html, body {
+  width:1920px; height:1080px;
+  margin:0; background:transparent; overflow:hidden;
+  font-family:'Be Vietnam Pro', sans-serif; color:#fff;
 }
 
-/* CENTER VIP AREA */
-#vip {
-  position: absolute;
-  top: 180px;
-  left: 750px;
-  width: 420px;
-  text-align: center;
+#root {
+  position:absolute;
+  top:170px; left:740px;
+  width:440px;
+  text-align:center;
 }
 
 /* TOP 1 */
 .top1 {
-  background: linear-gradient(135deg, #e53935, #ff6f60);
-  border-radius: 22px;
-  padding: 26px;
-  margin-bottom: 24px;
-  animation: entrance 0.8s ease;
+  background:linear-gradient(135deg,#e53935,#ff6f60);
+  border-radius:24px;
+  padding:28px;
+  animation:enter 0.8s ease;
 }
 
 .crown {
-  font-size: 56px;
-  animation: float 2s ease-in-out infinite;
+  font-size:56px;
+  animation:float 2s infinite;
 }
 
-.name {
-  font-size: 32px;
-  font-weight: 800;
-}
-
-.time {
-  font-size: 20px;
-  opacity: 0.85;
-}
+.name { font-size:34px; font-weight:800; }
+.time { font-size:20px; opacity:.85; }
 
 /* TOP 2–3 */
-.row {
-  display: flex;
-  justify-content: space-between;
+.row { display:flex; gap:14px; margin-top:18px; }
+.box {
+  flex:1;
+  background:rgba(255,255,255,.18);
+  border-radius:18px;
+  padding:16px;
 }
 
-.podium {
-  width: 48%;
-  background: rgba(255,255,255,0.15);
-  border-radius: 18px;
-  padding: 16px;
-}
+/* REST */
+.list { margin-top:20px; font-size:20px; text-align:left; }
 
-/* REST LIST */
-.list {
-  margin-top: 22px;
-  font-size: 20px;
+@keyframes enter {
+  from { transform:translateY(40px) scale(.9); opacity:0; }
+  to { transform:none; opacity:1; }
 }
-
-/* ANIMATIONS */
-@keyframes entrance {
-  from { transform: translateY(40px) scale(0.9); opacity: 0; }
-  to { transform: none; opacity: 1; }
-}
-
 @keyframes float {
-  0%,100% { transform: translateY(0); }
-  50% { transform: translateY(-6px); }
+  0%,100%{transform:translateY(0)}
+  50%{transform:translateY(-6px)}
 }
 </style>
 </head>
 
 <body>
-<div id="vip"></div>
+<div id="root"></div>
 
 <script>
-const API =
-  "https://script.google.com/macros/s/AKfycbwgkMXvIQ7jmDtoc4TGya_5BTA8fbin4rmQMGWVeK-tVLMfo3gjdbAlyi79CaHwuMmW/exec";
+const API = "https://script.google.com/macros/s/AKfycbwgkMXvIQ7jmDtoc4TGya_5BTA8fbin4rmQMGWVeK-tVLMfo3gjdbAlyi79CaHwuMmW/exec";
 
 async function load() {
-  const res = await fetch(API + "?t=" + Date.now());
+  const res = await fetch(API + "?type=orders&t=" + Date.now());
   const json = await res.json();
+  const data = json["Gói 1"] || [];
 
-  // ✅ FILTER ONLY GÓI 1
-  const data = json
-    .filter(r => r.goi === "Gói 1")
-    .sort((a, b) => a.time.localeCompare(b.time));
-
-  const root = document.getElementById("root");
-  root.innerHTML = "";
-
+  const r = document.getElementById("root");
+  r.innerHTML = "";
   if (!data.length) return;
 
-  /* TOP 1 */
-  root.innerHTML += `
+  r.innerHTML += `
     <div class="top1">
       <div class="crown">👑</div>
-      <div>
-        <div class="name">${data[0].name}</div>
-        <div class="time">${data[0].time}</div>
-      </div>
+      <div class="name">${data[0].name}</div>
+      <div class="time">${new Date(data[0].time).toLocaleTimeString()}</div>
     </div>
   `;
 
-
-
-  /* TOP 2 & 3 */
   if (data[1] || data[2]) {
-    let html = `<div class="row23">`;
-
-    if (data[1]) {
-      html += `
-        <div class="top2">
-          <div class="medal silver">2</div>
-          <div>
-            <div>${data[1].name}</div>
-            <div>${data[1].time}</div>
-          </div>
-        </div>`;
-    }
-
-    if (data[2]) {
-      html += `
-        <div class="top3">
-          <div class="medal bronze">3</div>
-          <div>
-            <div>${data[2].name}</div>
-            <div>${data[2].time}</div>
-          </div>
-        </div>`;
-    }
-
-    html += `</div>`;
-    root.innerHTML += html;
+    let row = `<div class="row">`;
+    if (data[1]) row += box(2,data[1]);
+    if (data[2]) row += box(3,data[2]);
+    row += `</div>`;
+    r.innerHTML += row;
   }
 
-  /* 4+ */
-  data.slice(3).forEach((u, i) => {
-    root.innerHTML += `
-      <div class="item">
-        <span>${i + 4}. ${u.name}</span>
-        <span>${u.time}</span>
-      </div>
-    `;
+  data.slice(3).forEach((u,i)=>{
+    r.innerHTML += `<div class="list">${i+4}. ${u.name} – ${new Date(u.time).toLocaleTimeString()}</div>`;
   });
 }
 
+function box(rank,u){
+  return `
+    <div class="box">
+      <div>#${rank}</div>
+      <div class="name">${u.name}</div>
+      <div class="time">${new Date(u.time).toLocaleTimeString()}</div>
+    </div>`;
+}
+
 load();
-setInterval(load, 3000);
+setInterval(load,3000);
 </script>
 </body>
 </html>
