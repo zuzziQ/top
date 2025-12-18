@@ -16,19 +16,10 @@ html, body {
   overflow: hidden;
 }
 
-/* ================= CONTAINER ================= */
 .stage {
   position: relative;
   width: 100%;
   height: 100%;
-}
-
-/* ================= TOP LABEL ================= */
-.top-label {
-  position: absolute;
-  top: 40px;
-  left: 50%;
-  transform: translateX(-50%);
 }
 
 /* ================= PODIUM ================= */
@@ -139,15 +130,8 @@ html, body {
 
 <body>
 <div class="stage">
-
-  <div class="top-label">
-    <!-- OBS image goes here -->
-  </div>
-
   <div class="podium" id="podium"></div>
-
   <div class="list" id="list"></div>
-
 </div>
 
 <script>
@@ -158,7 +142,7 @@ async function load() {
   const res = await fetch(API + "?type=orders&t=" + Date.now());
   const json = await res.json();
 
-  const data = (json["Gói 1"] || []);
+  const data = json["Gói 1"] || [];
   if (!data.length) return;
 
   const podium = document.getElementById("podium");
@@ -176,7 +160,7 @@ async function load() {
           <div class="rank">1</div>
           <div>
             <div class="name">${data[0].name}</div>
-            <div class="time">⏱ ${formatTime(data[0].datetime)}</div>
+            <div class="time">⏱ ${fmt(data[0].time)}</div>
           </div>
         </div>
       </div>`;
@@ -191,7 +175,7 @@ async function load() {
           <div class="rank">2</div>
           <div>
             <div class="name">${data[1].name}</div>
-            <div class="time">⏱ ${formatTime(data[1].datetime)}</div>
+            <div class="time">⏱ ${fmt(data[1].time)}</div>
           </div>
         </div>
       </div>`;
@@ -206,7 +190,7 @@ async function load() {
           <div class="rank">3</div>
           <div>
             <div class="name">${data[2].name}</div>
-            <div class="time">⏱ ${formatTime(data[2].datetime)}</div>
+            <div class="time">⏱ ${fmt(data[2].time)}</div>
           </div>
         </div>
       </div>`;
@@ -227,15 +211,15 @@ async function load() {
       <div class="row">
         <div>${i + 4}</div>
         <div>${u.name}</div>
-        <div>${formatTime(u.datetime)}</div>
-        <div>${formatTime(u.datetime)}</div>
+        <div>${fmt(u.time)}</div>
+        <div>${fmt(u.time)}</div>
       </div>`;
   });
 }
 
-function formatTime(dt) {
-  if (!dt) return "";
-  return dt.split(" ")[1];
+function fmt(ms) {
+  const d = new Date(ms);
+  return d.toLocaleTimeString("vi-VN", { hour12: false });
 }
 
 load();
