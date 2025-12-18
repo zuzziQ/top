@@ -1,187 +1,86 @@
 <!DOCTYPE html>
 <html lang="vi">
 <head>
-<meta charset="utf-8" />
+<meta charset="utf-8">
+<link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@600;800&display=swap" rel="stylesheet">
 
 <style>
-@import url('https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@500;700;800&display=swap');
-
 body {
-  margin: 0;
-  background: transparent;
   font-family: 'Be Vietnam Pro', sans-serif;
   color: #fff;
 }
 
-.container {
-  width: 700px;
+/* CENTER VIP AREA */
+#vip {
+  position: absolute;
+  top: 180px;
+  left: 750px;
+  width: 420px;
+  text-align: center;
 }
 
-/* MEDALS */
-.medal {
-  width: 56px;
-  height: 56px;
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-weight: 800;
-  font-size: 28px;
-  margin-right: 14px;
-}
-
-.gold { background: #e53935; }
-.silver { background: #cfd8dc; color: #000; }
-.bronze { background: #e0a96d; color: #000; }
-
-/* PODIUM */
+/* TOP 1 */
 .top1 {
   background: linear-gradient(135deg, #e53935, #ff6f60);
   border-radius: 22px;
-  padding: 20px;
-  margin-bottom: 16px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 14px;
+  padding: 26px;
+  margin-bottom: 24px;
+  animation: entrance 0.8s ease;
 }
+
 .crown {
-  font-size: 48px;
-  line-height: 1;
-  margin-right: 6px;
-  animation: crownFloat 1.4s ease-in-out infinite;
+  font-size: 56px;
+  animation: float 2s ease-in-out infinite;
 }
 
-@keyframes crownFloat {
-  0%   { transform: translateY(0) scale(1); }
-  50%  { transform: translateY(-8px) scale(1.05); }
-  100% { transform: translateY(0) scale(1); }
+.name {
+  font-size: 32px;
+  font-weight: 800;
 }
 
-.top1 .name { font-size: 40px; font-weight: 800; }
-.top1 .time { font-size: 22px; }
-
-.row23 {
-  display: flex;
-  justify-content: center;
-  gap: 14px;
-  margin-bottom: 16px;
+.time {
+  font-size: 20px;
+  opacity: 0.85;
 }
 
-.top2 {
-  width: 48%;
-  background: linear-gradient(135deg, #90caf9, #42a5f5);
-  border-radius: 18px;
-  padding: 16px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 12px;
-}
-
-.top3 {
-  width: 48%;
-  background: linear-gradient(135deg, #ffcc80, #fb8c00);
-  border-radius: 18px;
-  padding: 16px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 12px;
-}
-  
-.top2 div, .top3 div {
-  font-size: 22px;
-  font-weight: 600;
-}
-
-/* LIST */
-.item {
+/* TOP 2–3 */
+.row {
   display: flex;
   justify-content: space-between;
-  font-size: 24px;
-  margin-bottom: 6px;
+}
+
+.podium {
+  width: 48%;
+  background: rgba(255,255,255,0.15);
+  border-radius: 18px;
+  padding: 16px;
+}
+
+/* REST LIST */
+.list {
+  margin-top: 22px;
+  font-size: 20px;
+}
+
+/* ANIMATIONS */
+@keyframes entrance {
+  from { transform: translateY(40px) scale(0.9); opacity: 0; }
+  to { transform: none; opacity: 1; }
+}
+
+@keyframes float {
+  0%,100% { transform: translateY(0); }
+  50% { transform: translateY(-6px); }
 }
 </style>
 </head>
 
 <body>
-<div class="container" id="root"></div>
+<div id="vip"></div>
 
 <script>
-const API =
-  "https://script.google.com/macros/s/AKfycbwgkMXvIQ7jmDtoc4TGya_5BTA8fbin4rmQMGWVeK-tVLMfo3gjdbAlyi79CaHwuMmW/exec";
-
-async function load() {
-  const res = await fetch(API + "?t=" + Date.now());
-  const json = await res.json();
-
-  // ✅ FILTER ONLY GÓI 1
-  const data = json
-    .filter(r => r.goi === "Gói 1")
-    .sort((a, b) => a.time.localeCompare(b.time));
-
-  const root = document.getElementById("root");
-  root.innerHTML = "";
-
-  if (!data.length) return;
-
-  /* TOP 1 */
-  root.innerHTML += `
-    <div class="top1">
-      <div class="crown">👑</div>
-      <div>
-        <div class="name">${data[0].name}</div>
-        <div class="time">${data[0].time}</div>
-      </div>
-    </div>
-  `;
-
-
-
-  /* TOP 2 & 3 */
-  if (data[1] || data[2]) {
-    let html = `<div class="row23">`;
-
-    if (data[1]) {
-      html += `
-        <div class="top2">
-          <div class="medal silver">2</div>
-          <div>
-            <div>${data[1].name}</div>
-            <div>${data[1].time}</div>
-          </div>
-        </div>`;
-    }
-
-    if (data[2]) {
-      html += `
-        <div class="top3">
-          <div class="medal bronze">3</div>
-          <div>
-            <div>${data[2].name}</div>
-            <div>${data[2].time}</div>
-          </div>
-        </div>`;
-    }
-
-    html += `</div>`;
-    root.innerHTML += html;
-  }
-
-  /* 4+ */
-  data.slice(3).forEach((u, i) => {
-    root.innerHTML += `
-      <div class="item">
-        <span>${i + 4}. ${u.name}</span>
-        <span>${u.time}</span>
-      </div>
-    `;
-  });
-}
-
-load();
-setInterval(load, 3000);
+// 🔹 KEEP YOUR EXISTING GOI 1 API LOGIC HERE
+// Just render into #vip
 </script>
 </body>
 </html>
