@@ -6,100 +6,140 @@
 
 <style>
 html, body {
-  width:1920px; height:1080px;
-  margin:0; background:transparent; overflow:hidden;
-  font-family:'Be Vietnam Pro', sans-serif; color:#fff;
+  width:1920px;
+  height:1080px;
+  margin:0;
+  background:transparent;
+  overflow:hidden;
+  font-family:'Be Vietnam Pro', sans-serif;
+  color:#fff;
 }
 
-#root {
-  position:absolute;
-  top:170px; left:740px;
-  width:440px;
+.container {
+  width:420px;
+}
+
+/* ===== PODIUM ===== */
+.podium {
+  display:flex;
+  justify-content:center;
+  align-items:flex-end;
+  gap:18px;
+  margin-bottom:18px;
+}
+
+.podium-box {
+  background:rgba(255,255,255,0.18);
+  border-radius:18px;
+  padding:14px;
   text-align:center;
+  width:120px;
 }
 
-/* TOP 1 */
-.top1 {
+.podium-box.top1 {
   background:linear-gradient(135deg,#e53935,#ff6f60);
-  border-radius:24px;
-  padding:28px;
-  animation:enter 0.8s ease;
+  transform:translateY(-18px);
 }
 
 .crown {
-  font-size:56px;
-  animation:float 2s infinite;
+  font-size:38px;
+  margin-bottom:4px;
+  animation:float 2s infinite ease-in-out;
 }
 
-.name { font-size:34px; font-weight:800; }
-.time { font-size:20px; opacity:.85; }
-
-/* TOP 2–3 */
-.row { display:flex; gap:14px; margin-top:18px; }
-.box {
-  flex:1;
-  background:rgba(255,255,255,.18);
-  border-radius:18px;
-  padding:16px;
+.rank {
+  font-size:26px;
+  font-weight:800;
 }
 
-/* REST */
-.list { margin-top:20px; font-size:20px; text-align:left; }
-
-@keyframes enter {
-  from { transform:translateY(40px) scale(.9); opacity:0; }
-  to { transform:none; opacity:1; }
+.name {
+  font-size:18px;
+  font-weight:700;
 }
+
+.time {
+  font-size:14px;
+  opacity:.85;
+}
+
+/* ===== LIST BELOW ===== */
+.list {
+  margin-top:10px;
+}
+
+.row {
+  display:flex;
+  justify-content:space-between;
+  font-size:18px;
+  margin-bottom:6px;
+  opacity:.9;
+}
+
+/* ===== ANIMATION ===== */
 @keyframes float {
-  0%,100%{transform:translateY(0)}
-  50%{transform:translateY(-6px)}
+  0%,100% { transform:translateY(0); }
+  50% { transform:translateY(-6px); }
 }
 </style>
 </head>
 
 <body>
-<div id="root"></div>
+<div class="container" id="root"></div>
 
 <script>
-const API = "https://script.google.com/macros/s/AKfycbwgkMXvIQ7jmDtoc4TGya_5BTA8fbin4rmQMGWVeK-tVLMfo3gjdbAlyi79CaHwuMmW/exec";
+/******** CONFIG ********/
+const GOI_NAME = "Gói 1";   // 🔁 CHANGE THIS PER FILE
+const API =
+ "https://script.google.com/macros/s/AKfycbwgkMXvIQ7jmDtoc4TGya_5BTA8fbin4rmQMGWVeK-tVLMfo3gjdbAlyi79CaHwuMmW/exec";
 
+/******** LOAD ********/
 async function load() {
   const res = await fetch(API + "?type=orders&t=" + Date.now());
   const json = await res.json();
-  const data = json["Gói 1"] || [];
+  const data = (json[GOI_NAME] || [])
+    .sort((a,b)=>a.time-b.time);
 
-  const r = document.getElementById("root");
-  r.innerHTML = "";
+  const root = document.getElementById("root");
+  root.innerHTML = "";
   if (!data.length) return;
 
-  r.innerHTML += `
-    <div class="top1">
-      <div class="crown">👑</div>
-      <div class="name">${data[0].name}</div>
-      <div class="time">${new Date(data[0].time).toLocaleTimeString()}</div>
+  /* ===== PODIUM 1–2–3 ===== */
+  root.innerHTML += `
+    <div class="podium">
+      ${podiumBox(data[1], 2)}
+      ${podiumBox(data[0], 1, true)}
+      ${podiumBox(data[2], 3)}
     </div>
   `;
 
-  if (data[1] || data[2]) {
-    let row = `<div class="row">`;
-    if (data[1]) row += box(2,data[1]);
-    if (data[2]) row += box(3,data[2]);
-    row += `</div>`;
-    r.innerHTML += row;
-  }
-
+  /* ===== LIST 4+ ===== */
+  let list = `<div class="list">`;
   data.slice(3).forEach((u,i)=>{
-    r.innerHTML += `<div class="list">${i+4}. ${u.name} – ${new Date(u.time).toLocaleTimeString()}</div>`;
+    list += `
+      <div class="row">
+        <span>${i+4}. ${u.name}</span>
+        <span>${fmt(u.time)}</span>
+      </div>
+    `;
   });
+  list += `</div>`;
+  root.innerHTML += list;
 }
 
-function box(rank,u){
+function podiumBox(u, rank, isTop1=false) {
+  if (!u) return "";
   return `
-    <div class="box">
-      <div>#${rank}</div>
+    <div class="podium-box ${isTop1 ? "top1":""}">
+      ${isTop1 ? `<div class="crown">👑</div>` : ""}
+      <div class="rank">${rank}</div>
       <div class="name">${u.name}</div>
-      <div class="time">${new Date(u.time).toLocaleTimeString()}</div>
-    </div>`;
+      <div class="time">${fmt(u.time)}</div>
+    </div>
+  `;
+}
+
+function fmt(t) {
+  return new Date(t).toLocaleTimeString("vi-VN");
 }
 
 load();
