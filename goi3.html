@@ -4,15 +4,15 @@
 <meta charset="utf-8" />
 
 <style>
-@import url('https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@500;700;800&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@600;800&display=swap');
 
 body {
   margin: 0;
   background: transparent;
   font-family: 'Be Vietnam Pro', sans-serif;
+  color: #fff;
 }
 
-/* CONTAINER */
 .container {
   width: 700px;
 }
@@ -22,52 +22,34 @@ body {
   background: linear-gradient(135deg, #e53935, #ff6f60);
   border-radius: 26px;
   padding: 28px 30px;
-  margin-bottom: 22px;
+  margin-bottom: 24px;
   display: flex;
   align-items: center;
   gap: 20px;
-  color: #fff;
 }
 
 .crown {
-  font-size: 48px;
-  line-height: 1;
+  font-size: 46px;
 }
 
 .top1 .name {
-  font-size: 44px;
+  font-size: 42px;
   font-weight: 800;
-  line-height: 1.1;
 }
 
 .top1 .time {
-  font-size: 26px;
-  margin-top: 6px;
+  font-size: 24px;
   opacity: 0.95;
 }
 
-/* ===== LIST (NON TOP) ===== */
+/* ===== LIST ===== */
 .item {
   display: flex;
   justify-content: space-between;
   font-size: 28px;
   margin-bottom: 12px;
-  color: #000;
+  color: #000; /* chữ đen */
   font-weight: 600;
-}
-
-/* ===== HIGHLIGHT NEWEST BUYER ===== */
-.item.highlight {
-  background: rgba(255, 235, 59, 0.35);
-  border-radius: 14px;
-  padding: 8px 12px;
-  animation: pulse 1.2s ease-in-out infinite;
-}
-
-@keyframes pulse {
-  0% { box-shadow: 0 0 0 rgba(255,235,59,0.6); }
-  50% { box-shadow: 0 0 16px rgba(255,235,59,0.9); }
-  100% { box-shadow: 0 0 0 rgba(255,235,59,0.6); }
 }
 </style>
 </head>
@@ -77,55 +59,48 @@ body {
 
 <script>
 const API =
-  "https://script.google.com/macros/s/AKfycbwgkMXvIQ7jmDtoc4TGya_5BTA8fbin4rmQMGWVeK-tVLMfo3gjdbAlyi79CaHwuMmW/exec";
+  "https://script.google.com/macros/s/AKfycbwgkMXvIQ7jmDtoc4TGya_5BTA8fbin4rmQMGWVeK-tVLMfo3gjdbAlyi79CaHwuMmW/exec?type=orders";
 
-// 🔴 CHANGE FOR EACH FILE
-const GOI_NAME = "Gói 3"; // Gói 2 / Gói 3 / Gói 4
+// 🔴 ĐỔI GÓI TẠI ĐÂY
+const GOI_NAME = "Gói 3"; // Gói 3 / Gói 4
 
 async function load() {
-  const res = await fetch(API + "?t=" + Date.now());
+  const res = await fetch(API + "&t=" + Date.now());
   const json = await res.json();
 
-  const data = json
-    .filter(r => r.goi === GOI_NAME)
-    .sort((a, b) => a.time.localeCompare(b.time));
+  const data = json[GOI_NAME] || [];
 
   const root = document.getElementById("root");
   root.innerHTML = "";
 
   if (!data.length) return;
 
+  // đã được API sort theo time ↑
+  const top1 = data[0];
+  const rest = data.slice(1);
+
   /* ===== TOP 1 ===== */
   root.innerHTML += `
     <div class="top1">
       <div class="crown">👑</div>
       <div>
-        <div class="name">${data[0].name}</div>
-        <div class="time">${data[0].time}</div>
+        <div class="name">${top1.name}</div>
+        <div class="time">🔥 ${new Date(top1.time).toLocaleTimeString()}</div>
       </div>
     </div>
   `;
 
-  /* ===== REST (NON TOP) ===== */
-  if (data.length > 1) {
-    const newestIndex = data.length - 1;
-
-    data.slice(1).forEach((u, i) => {
-      const realIndex = i + 1;
-      const highlightClass =
-        realIndex === newestIndex ? "highlight" : "";
-
-      root.innerHTML += `
-        <div class="item ${highlightClass}">
-          <span>👤 ${u.name}</span>
-          <span>${u.time}</span>
-        </div>
-      `;
-    });
-  }
+  /* ===== LIST ===== */
+  rest.forEach((u, i) => {
+    root.innerHTML += `
+      <div class="item">
+        <span>👤 ${u.name}</span>
+        <span>${new Date(u.time).toLocaleTimeString()}</span>
+      </div>
+    `;
+  });
 }
 
-/* 🚀 RUN */
 load();
 setInterval(load, 3000);
 </script>
