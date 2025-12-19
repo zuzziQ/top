@@ -129,91 +129,17 @@ body {
 const API =
   "https://script.google.com/macros/s/AKfycbwgkMXvIQ7jmDtoc4TGya_5BTA8fbin4rmQMGWVeK-tVLMfo3gjdbAlyi79CaHwuMmW/exec";
 
-async function load() {
-  const res = await fetch(API + "?type=newest&t=" + Date.now());
-  const json = await res.json();
-
-  if (!Array.isArray(json)) return;
-
-  const data = json
-    .filter(r => r.goi === "Gói 1")
-    .sort((a, b) => a.datetime.localeCompare(b.datetime));
-
-  const root = document.getElementById("root");
-  root.innerHTML = "";
-  if (!data.length) return;
-
-  /* TOP 1 */
-  root.innerHTML += `
-    <div class="top1">
-      <div class="crown">👑</div>
-      <div class="row">
-        <div class="badge">1</div>
-        <div>
-          <div class="name">${data[0].name}</div>
-          <div class="time">${data[0].datetime}</div>
-        </div>
-      </div>
-    </div>
-  `;
-
-  /* TOP 2 */
-  if (data[1]) {
-    root.innerHTML += `
-      <div class="top2">
-        <div class="row">
-          <div class="badge">2</div>
-          <div>
-            <div class="name">${data[1].name}</div>
-            <div class="time">${data[1].datetime}</div>
-          </div>
-        </div>
-      </div>
-    `;
-  }
-
-  /* TOP 3 */
-  if (data[2]) {
-    root.innerHTML += `
-      <div class="top3">
-        <div class="row">
-          <div class="badge">3</div>
-          <div>
-            <div class="name">${data[2].name}</div>
-            <div class="time">${data[2].datetime}</div>
-          </div>
-        </div>
-      </div>
-    `;
-  }
-
-  /* LIST */
-  let list = `
-    <div class="list">
-      <div class="list-header">
-        <div>HẠNG</div>
-        <div>HỌ VÀ TÊN</div>
-        <div>THỜI GIAN</div>
-        <div>THỜI GIAN</div>
-      </div>`;
-
-  data.slice(3).forEach((u, i) => {
-    list += `
-      <div class="list-item">
-        <div>${i + 4}</div>
-        <div>${u.name}</div>
-        <div>${u.datetime}</div>
-        <div>${u.datetime}</div>
-      </div>
-    `;
+fetch(API + "?type=newest&t=" + Date.now())
+  .then(r => r.json())
+  .then(d => {
+    document.body.innerHTML =
+      "<pre>" + JSON.stringify(d, null, 2) + "</pre>";
+  })
+  .catch(err => {
+    document.body.innerHTML = "ERROR: " + err;
   });
-
-  list += `</div>`;
-  root.innerHTML += list;
-}
-
-load();
-setInterval(load, 3000);
 </script>
+
+
 </body>
 </html>
