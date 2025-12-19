@@ -4,7 +4,7 @@
 <meta charset="utf-8" />
 
 <style>
-@import url('https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@600;800&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@500;700;800&display=swap');
 
 body {
   margin: 0;
@@ -14,123 +14,93 @@ body {
 }
 
 .container {
-  width: 900px;
-  height: 800px;
-  position: relative;
+  width: 700px;
 }
 
-/* ===== COMMON ===== */
-.rankNum {
-  width: 44px;
-  height: 44px;
-  border-radius: 10px;
-  background: rgba(255,255,255,0.25);
+/* MEDALS */
+.medal {
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 24px;
   font-weight: 800;
+  font-size: 28px;
+  margin-right: 14px;
 }
 
-.name {
-  font-weight: 800;
-  font-size: 26px;
-}
+.gold { background: #e53935; }
+.silver { background: #cfd8dc; color: #000; }
+.bronze { background: #e0a96d; color: #000; }
 
-.time {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  background: rgba(0,0,0,0.4);
-  padding: 5px 12px;
-  border-radius: 999px;
-  font-size: 18px;
-  margin-top: 4px;
-}
-
-/* ===== CROWN ===== */
-.crown {
-  font-size: 56px;
-  animation: float 1.6s ease-in-out infinite;
-}
-
-@keyframes float {
-  0% { transform: translateY(0); }
-  50% { transform: translateY(-10px); }
-  100% { transform: translateY(0); }
-}
-
-/* =========================
-   ZONE 1 – TOP 1 (CENTER)
-========================= */
-.zone1 {
-  position: absolute;
-  top: 60px;
-  left: 50%;
-  transform: translateX(-50%);
-  text-align: center;
-}
-  
-.zone1 .name {
-  white-space: nowrap;
-}
-.zone1Row {
-  display: inline-flex;
-  align-items: center;
-  gap: 14px;
-  margin-top: 6px;
-}
-
-/* =========================
-   ZONE 2 – TOP 2 & 3
-========================= */
-/* ===== ZONE 2 ROW ===== */
-.zone2Item {
+/* PODIUM */
+.top1 {
+  background: linear-gradient(135deg, #e53935, #ff6f60);
+  border-radius: 22px;
+  padding: 20px;
+  margin-bottom: 16px;
   display: flex;
   align-items: center;
+  justify-content: center;
+  gap: 14px;
+}
+.crown {
+  font-size: 48px;
+  line-height: 1;
+  margin-right: 6px;
+  animation: crownFloat 1.4s ease-in-out infinite;
+}
+
+@keyframes crownFloat {
+  0%   { transform: translateY(0) scale(1); }
+  50%  { transform: translateY(-8px) scale(1.05); }
+  100% { transform: translateY(0) scale(1); }
+}
+
+.top1 .name { font-size: 40px; font-weight: 800; }
+.top1 .time { font-size: 22px; }
+
+.row23 {
+  display: flex;
+  justify-content: center;
+  gap: 14px;
+  margin-bottom: 16px;
+}
+
+.top2 {
+  width: 48%;
+  background: linear-gradient(135deg, #90caf9, #42a5f5);
+  border-radius: 18px;
+  padding: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   gap: 12px;
-  white-space: nowrap;
 }
 
-/* Silver crown for 2 & 3 */
-.crown.silver {
-  font-size: 38px;
-  opacity: 0.85;
-  animation: none; /* no float */
+.top3 {
+  width: 48%;
+  background: linear-gradient(135deg, #ffcc80, #fb8c00);
+  border-radius: 18px;
+  padding: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+}
+  
+.top2 div, .top3 div {
+  font-size: 22px;
+  font-weight: 600;
 }
 
-/* Name single line */
-.zone2Item .name {
-  font-size: 26px;
-  font-weight: 800;
-  max-width: 220px;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-
-/* Time single line */
-.zone2Item .time {
-  white-space: nowrap;
-}
-
-
-/* =========================
-   ZONE 3 – LIST
-========================= */
-.zone3 {
-  position: absolute;
-  top: 520px; /* VERY LARGE GAP */
-  left: 0;
-  width: 100%;
-}
-
+/* LIST */
 .item {
   display: flex;
   justify-content: space-between;
-  font-size: 22px;
-  margin-bottom: 8px;
-  opacity: 0.9;
+  font-size: 24px;
+  margin-bottom: 6px;
 }
 </style>
 </head>
@@ -146,71 +116,68 @@ async function load() {
   const res = await fetch(API + "?t=" + Date.now());
   const json = await res.json();
 
+  // ✅ FILTER ONLY GÓI 1
   const data = json
     .filter(r => r.goi === "Gói 1")
     .sort((a, b) => a.time.localeCompare(b.time));
 
   const root = document.getElementById("root");
   root.innerHTML = "";
+
   if (!data.length) return;
 
-  /* ===== ZONE 1 ===== */
+  /* TOP 1 */
   root.innerHTML += `
-    <div class="zone1">
+    <div class="top1">
       <div class="crown">👑</div>
-      <div class="zone1Row">
-        <div class="rankNum">1</div>
-        <div>
-          <div class="name">${data[0].name}</div>
-          <div class="time">🔥 ${data[0].time}</div>
-        </div>
+      <div>
+        <div class="name">${data[0].name}</div>
+        <div class="time">${data[0].time}</div>
       </div>
     </div>
   `;
 
-  /* ===== ZONE 2 ===== */
-  let zone2 = `<div class="zone2">`;
-
-  if (data[1]) {
-  zone2 += `
-    <div class="zone2Item">
-      <div class="crown silver">👑</div>
-      <div class="rankNum">2</div>
-      <div class="name">${data[1].name}</div>
-      <div class="time">🔥 ${data[1].time}</div>
-    </div>
-  `;
-}
-
-if (data[2]) {
-  zone2 += `
-    <div class="zone2Item">
-      <div class="crown silver">👑</div>
-      <div class="rankNum">3</div>
-      <div class="name">${data[2].name}</div>
-      <div class="time">🔥 ${data[2].time}</div>
-    </div>
-  `;
-}
 
 
-  zone2 += `</div>`;
-  root.innerHTML += zone2;
+  /* TOP 2 & 3 */
+  if (data[1] || data[2]) {
+    let html = `<div class="row23">`;
 
-  /* ===== ZONE 3 ===== */
-  let zone3 = `<div class="zone3">`;
+    if (data[1]) {
+      html += `
+        <div class="top2">
+          <div class="medal silver">2</div>
+          <div>
+            <div>${data[1].name}</div>
+            <div>${data[1].time}</div>
+          </div>
+        </div>`;
+    }
 
-  data.slice(3, 6).forEach((u, i) => {
-    zone3 += `
+    if (data[2]) {
+      html += `
+        <div class="top3">
+          <div class="medal bronze">3</div>
+          <div>
+            <div>${data[2].name}</div>
+            <div>${data[2].time}</div>
+          </div>
+        </div>`;
+    }
+
+    html += `</div>`;
+    root.innerHTML += html;
+  }
+
+  /* 4+ */
+  data.slice(3).forEach((u, i) => {
+    root.innerHTML += `
       <div class="item">
         <span>${i + 4}. ${u.name}</span>
         <span>${u.time}</span>
       </div>
     `;
   });
-
-  zone3 += `</div>`;
-  root.innerHTML += zone3;
 }
 
 load();
