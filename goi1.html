@@ -14,63 +14,44 @@ body {
 }
 
 .container {
-  width: 820px;
+  width: 900px;
   margin: 0 auto;
 }
 
-/* ===== PODIUM GRID ===== */
+/* ===== CROWN FLOAT ===== */
+.crown {
+  font-size: 64px;
+  animation: float 1.5s ease-in-out infinite;
+}
+
+@keyframes float {
+  0% { transform: translateY(0); }
+  50% { transform: translateY(-10px); }
+  100% { transform: translateY(0); }
+}
+
+/* ===== PODIUM ===== */
 .podium {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  grid-template-rows: auto auto;
-  gap: 26px;
-  justify-items: center;
-  margin-bottom: 90px; /* HUGE SPACE before rank 4 */
+  text-align: center;
 }
 
 /* ===== TOP 1 ===== */
 .top1 {
-  grid-column: 1 / 3;
-  text-align: center;
+  margin-bottom: 40px;
 }
 
-.top1 .crown {
-  font-size: 64px;
-  margin-bottom: 6px;
-}
-
-.top1 .name {
-  font-size: 42px;
-  font-weight: 800;
-  margin-bottom: 4px;
-}
-
-.top1 .time {
+.top1Row {
   display: inline-flex;
   align-items: center;
-  gap: 6px;
-  background: rgba(0,0,0,0.35);
-  padding: 6px 14px;
-  border-radius: 999px;
-  font-size: 22px;
-}
-
-/* ===== TOP 2 & 3 ===== */
-.rankBox {
-  display: flex;
-  align-items: center;
   gap: 14px;
-  background: rgba(0,0,0,0.35);
-  padding: 16px 22px;
-  border-radius: 18px;
-  width: 100%;
+  margin-top: 8px;
 }
 
 .rankNum {
-  width: 52px;
-  height: 52px;
-  border-radius: 14px;
-  background: #444;
+  width: 48px;
+  height: 48px;
+  border-radius: 12px;
+  background: rgba(255,255,255,0.2);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -78,19 +59,54 @@ body {
   font-weight: 800;
 }
 
-.rankBox .name {
+.top1 .name {
+  font-size: 40px;
+  font-weight: 800;
+  text-align: left;
+}
+
+.time {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: rgba(0,0,0,0.35);
+  padding: 6px 14px;
+  border-radius: 999px;
+  font-size: 22px;
+  margin-top: 4px;
+}
+
+/* ===== TOP 2 & 3 ===== */
+.row23 {
+  display: flex;
+  justify-content: center;
+  gap: 120px;
+  margin-bottom: 140px; /* HUGE GAP before rank 4 */
+}
+
+.rankSmall {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.rankSmall .crown {
+  font-size: 40px;
+  opacity: 0.85;
+}
+
+.rankSmall .name {
   font-size: 26px;
   font-weight: 700;
 }
 
-.rankBox .time {
+.rankSmall .time {
   font-size: 20px;
-  opacity: 0.85;
 }
 
 /* ===== LIST 4–6 ===== */
 .list {
-  margin-top: 0;
+  width: 100%;
 }
 
 .item {
@@ -100,7 +116,6 @@ body {
   margin-bottom: 8px;
   opacity: 0.9;
 }
-
 </style>
 </head>
 
@@ -122,50 +137,54 @@ async function load() {
   const root = document.getElementById("root");
   root.innerHTML = "";
 
-  if (!data.length) {
-    root.innerHTML = "<div>No data</div>";
-    return;
-  }
+  if (!data.length) return;
 
-  /* PODIUM */
   root.innerHTML += `<div class="podium">`;
 
   /* TOP 1 */
   root.innerHTML += `
     <div class="top1">
       <div class="crown">👑</div>
-      <div class="name">${data[0].name}</div>
-      <div class="time">🔥 ${data[0].time}</div>
+      <div class="top1Row">
+        <div class="rankNum">1</div>
+        <div>
+          <div class="name">${data[0].name}</div>
+          <div class="time">🔥 ${data[0].time}</div>
+        </div>
+      </div>
     </div>
   `;
 
-  /* TOP 2 */
+  /* TOP 2 & 3 */
+  root.innerHTML += `<div class="row23">`;
+
   if (data[1]) {
     root.innerHTML += `
-      <div class="rankBox">
+      <div class="rankSmall">
         <div class="rankNum">2</div>
         <div>
           <div class="name">${data[1].name}</div>
           <div class="time">🔥 ${data[1].time}</div>
         </div>
+        <div class="crown">👑</div>
       </div>
     `;
   }
 
-  /* TOP 3 */
   if (data[2]) {
     root.innerHTML += `
-      <div class="rankBox">
+      <div class="rankSmall">
         <div class="rankNum">3</div>
         <div>
           <div class="name">${data[2].name}</div>
           <div class="time">🔥 ${data[2].time}</div>
         </div>
+        <div class="crown">👑</div>
       </div>
     `;
   }
 
-  root.innerHTML += `</div>`; // close podium
+  root.innerHTML += `</div></div>`;
 
   /* LIST 4–6 */
   root.innerHTML += `<div class="list">`;
@@ -179,10 +198,9 @@ async function load() {
     `;
   });
 
-  root.innerHTML += `</div>`; // close list
+  root.innerHTML += `</div>`;
 }
 
-/* ✅ CALL AFTER FUNCTION IS CLOSED */
 load();
 setInterval(load, 3000);
 </script>
