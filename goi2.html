@@ -10,9 +10,9 @@ body {
   margin: 0;
   background: transparent;
   font-family: 'Be Vietnam Pro', sans-serif;
-  color: #fff;
 }
 
+/* CONTAINER */
 .container {
   width: 700px;
 }
@@ -26,38 +26,49 @@ body {
   display: flex;
   align-items: center;
   gap: 20px;
+  color: #fff;
 }
 
-/* Crown */
 .crown {
   font-size: 48px;
   line-height: 1;
 }
 
-/* Name */
 .top1 .name {
-  font-size: 44px;       /* 🔥 MUCH BIGGER */
+  font-size: 44px;
   font-weight: 800;
   line-height: 1.1;
 }
 
-/* Time */
 .top1 .time {
-  font-size: 26px;       /* 🔥 MUCH BIGGER */
-  opacity: 0.95;
+  font-size: 26px;
   margin-top: 6px;
+  opacity: 0.95;
 }
 
-  /* ===== LIST (NON TOP) ===== */
+/* ===== LIST (NON TOP) ===== */
 .item {
   display: flex;
   justify-content: space-between;
   font-size: 28px;
   margin-bottom: 12px;
-  color: #000;       /* ✅ BLACK */
+  color: #000;
   font-weight: 600;
 }
 
+/* ===== HIGHLIGHT NEWEST BUYER ===== */
+.item.highlight {
+  background: rgba(255, 235, 59, 0.35);
+  border-radius: 14px;
+  padding: 8px 12px;
+  animation: pulse 1.2s ease-in-out infinite;
+}
+
+@keyframes pulse {
+  0% { box-shadow: 0 0 0 rgba(255,235,59,0.6); }
+  50% { box-shadow: 0 0 16px rgba(255,235,59,0.9); }
+  100% { box-shadow: 0 0 0 rgba(255,235,59,0.6); }
+}
 </style>
 </head>
 
@@ -68,8 +79,8 @@ body {
 const API =
   "https://script.google.com/macros/s/AKfycbwgkMXvIQ7jmDtoc4TGya_5BTA8fbin4rmQMGWVeK-tVLMfo3gjdbAlyi79CaHwuMmW/exec";
 
-// 🔴 CHANGE THIS FOR EACH FILE
-const GOI_NAME = "Gói 2"; // "Gói 3" / "Gói 4"
+// 🔴 CHANGE FOR EACH FILE
+const GOI_NAME = "Gói 2"; // Gói 2 / Gói 3 / Gói 4
 
 async function load() {
   const res = await fetch(API + "?t=" + Date.now());
@@ -84,7 +95,7 @@ async function load() {
 
   if (!data.length) return;
 
-  /* TOP 1 */
+  /* ===== TOP 1 ===== */
   root.innerHTML += `
     <div class="top1">
       <div class="crown">👑</div>
@@ -95,19 +106,26 @@ async function load() {
     </div>
   `;
 
-/* ===== REST (NON TOP – BLACK TEXT) ===== */
-if (data.length > 1) {
-  data.slice(1).forEach((u, i) => {
-    root.innerHTML += `
-      <div class="item">
-        <span>👤 ${u.name}</span>
-        <span>${u.time}</span>
-      </div>
-    `;
-  });
+  /* ===== REST (NON TOP) ===== */
+  if (data.length > 1) {
+    const newestIndex = data.length - 1;
+
+    data.slice(1).forEach((u, i) => {
+      const realIndex = i + 1;
+      const highlightClass =
+        realIndex === newestIndex ? "highlight" : "";
+
+      root.innerHTML += `
+        <div class="item ${highlightClass}">
+          <span>👤 ${u.name}</span>
+          <span>${u.time}</span>
+        </div>
+      `;
+    });
+  }
 }
 
-
+/* 🚀 RUN */
 load();
 setInterval(load, 3000);
 </script>
