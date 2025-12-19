@@ -1,10 +1,155 @@
 <!DOCTYPE html>
-<html>
-<body style="background:black;color:white;font-size:40px">
-SCRIPT LOADED
+<html lang="vi">
+<head>
+<meta charset="utf-8" />
+
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@600;800&display=swap');
+
+body {
+  margin: 0;
+  background: transparent;
+  font-family: 'Be Vietnam Pro', sans-serif;
+  color: #fff;
+}
+
+.container {
+  width: 700px;
+}
+
+/* ===== TOP 1 ===== */
+.top1 {
+  background: linear-gradient(135deg, #e53935, #ff6f60);
+  border-radius: 22px;
+  padding: 24px;
+  margin-bottom: 14px;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.top1 .crown {
+  font-size: 48px;
+}
+
+.top1 .name {
+  font-size: 40px;
+  font-weight: 800;
+}
+
+.top1 .time {
+  font-size: 22px;
+}
+
+/* ===== TOP 2–3 ===== */
+.row23 {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 14px;
+}
+
+.rankBox {
+  width: 49%;
+  padding: 16px;
+  border-radius: 18px;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.rank2 { background: rgba(255,255,255,0.12); }
+.rank3 { background: rgba(255,255,255,0.08); }
+
+.rankNum {
+  font-size: 32px;
+  font-weight: 800;
+  opacity: 0.9;
+}
+
+/* ===== LIST ===== */
+.item {
+  display: flex;
+  justify-content: space-between;
+  font-size: 22px;
+  margin-bottom: 6px;
+  opacity: 0.9;
+}
+</style>
+</head>
+
+<body>
+<div class="container" id="root"></div>
+
 <script>
-alert("JS IS RUNNING");
-document.body.innerHTML = "JS EXECUTED";
-</script>
-</body>
-</html>
+const API =
+  "https://script.google.com/macros/s/AKfycbwgkMXvIQ7jmDtoc4TGya_5BTA8fbin4rmQMGWVeK-tVLMfo3gjdbAlyi79CaHwuMmW/exec";
+
+async function load() {
+  const res = await fetch(API + "?t=" + Date.now());
+  const json = await res.json();
+
+  const data = json
+    .filter(r => r.goi === "Gói 1")
+    .sort((a, b) => a.time.localeCompare(b.time));
+
+  const root = document.getElementById("root");
+  root.innerHTML = "";
+
+  if (!data.length) {
+    root.innerHTML = "<div>No data</div>";
+    return;
+  }
+
+  /* TOP 1 */
+  root.innerHTML += `
+    <div class="top1">
+      <div class="crown">👑</div>
+      <div>
+        <div class="name">${data[0].name}</div>
+        <div class="time">${data[0].time}</div>
+      </div>
+    </div>
+  `;
+
+  /* TOP 2–3 */
+  if (data[1] || data[2]) {
+    root.innerHTML += `<div class="row23">`;
+
+    if (data[1]) {
+      root.innerHTML += `
+        <div class="rankBox rank2">
+          <div class="rankNum">2</div>
+          <div>
+            <div>${data[1].name}</div>
+            <div>${data[1].time}</div>
+          </div>
+        </div>`;
+    }
+
+    if (data[2]) {
+      root.innerHTML += `
+        <div class="rankBox rank3">
+          <div class="rankNum">3</div>
+          <div>
+            <div>${data[2].name}</div>
+            <div>${data[2].time}</div>
+          </div>
+        </div>`;
+    }
+
+    root.innerHTML += `</div>`;
+  }
+
+  /* 4–6 */
+  data.slice(3, 6).forEach((u, i) => {
+    root.innerHTML += `
+      <div class="item">
+        <span>${i + 4}. ${u.name}</span>
+        <span>${u.time}</span>
+      </div>
+    `;
+  });
+}
+
+load();
+set
