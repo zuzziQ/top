@@ -130,8 +130,10 @@ const API =
   "https://script.google.com/macros/s/AKfycbwgkMXvIQ7jmDtoc4TGya_5BTA8fbin4rmQMGWVeK-tVLMfo3gjdbAlyi79CaHwuMmW/exec";
 
 async function load() {
-  const res = await fetch(API + "?t=" + Date.now());
+  const res = await fetch(API + "?type=newest&t=" + Date.now());
   const json = await res.json();
+
+  if (!Array.isArray(json)) return;
 
   const data = json
     .filter(r => r.goi === "Gói 1")
@@ -142,19 +144,18 @@ async function load() {
   if (!data.length) return;
 
   /* TOP 1 */
-  if (data[0]) {
-    root.innerHTML += `
-      <div class="top1">
-        <div class="crown">👑</div>
-        <div class="row">
-          <div class="badge">1</div>
-          <div>
-            <div class="name">${data[0].name}</div>
-            <div class="time">${data[0].datetime}</div>
-          </div>
+  root.innerHTML += `
+    <div class="top1">
+      <div class="crown">👑</div>
+      <div class="row">
+        <div class="badge">1</div>
+        <div>
+          <div class="name">${data[0].name}</div>
+          <div class="time">${data[0].datetime}</div>
         </div>
-      </div>`;
-  }
+      </div>
+    </div>
+  `;
 
   /* TOP 2 */
   if (data[1]) {
@@ -167,7 +168,8 @@ async function load() {
             <div class="time">${data[1].datetime}</div>
           </div>
         </div>
-      </div>`;
+      </div>
+    `;
   }
 
   /* TOP 3 */
@@ -181,17 +183,18 @@ async function load() {
             <div class="time">${data[2].datetime}</div>
           </div>
         </div>
-      </div>`;
+      </div>
+    `;
   }
 
-  /* LIST 4+ */
+  /* LIST */
   let list = `
     <div class="list">
       <div class="list-header">
         <div>HẠNG</div>
         <div>HỌ VÀ TÊN</div>
-        <div>THỜI GIAN CHỐT</div>
-        <div>THỜI GIAN ĐĂNG KÝ</div>
+        <div>THỜI GIAN</div>
+        <div>THỜI GIAN</div>
       </div>`;
 
   data.slice(3).forEach((u, i) => {
@@ -201,7 +204,8 @@ async function load() {
         <div>${u.name}</div>
         <div>${u.datetime}</div>
         <div>${u.datetime}</div>
-      </div>`;
+      </div>
+    `;
   });
 
   list += `</div>`;
