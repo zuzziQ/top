@@ -156,42 +156,43 @@ async function load() {
   }
 
   /* ===== PINNED TOP 2 & 3 ===== */
-  if (pinned[1] || pinned[2]) {
+  if (pinned.length >= 2) {
     let html = `<div class="row23">`;
-
-    if (pinned[1]) {
-      html += `
-        <div class="top2">
-          <div class="medal silver">2</div>
-            <div>
-              <div class="name">${pinned[1].name}</div>
-              <div class="time">${pinned[1].time}</div>
-            </div>
+  
+    // TOP 2
+    html += `
+      <div class="top2">
+        <div class="medal silver">2</div>
+        <div>
+          <div class="name">${pinned[1].name}</div>
+          <div class="time">${pinned[1].time}</div>
         </div>
-      `;
-    }
-
-    if (pinned[2]) {
+      </div>
+    `;
+  
+    // TOP 3 (chỉ khi có >= 3 người)
+    if (pinned.length >= 3) {
       html += `
         <div class="top3">
           <div class="medal bronze">3</div>
-            <div>
-              <div class="name">${pinned[2].name}</div>
-              <div class="time">${pinned[2].time}</div>
-            </div>
+          <div>
+            <div class="name">${pinned[2].name}</div>
+            <div class="time">${pinned[2].time}</div>
+          </div>
         </div>
       `;
     }
-
+  
     html += `</div>`;
     root.innerHTML += html;
   }
+
 
   /* ===== REST (NEWEST FIRST, NO NUMBER) ===== */
   rest.forEach(u => {
     root.innerHTML += `
       <div class="item">
-        <span>${u.name}</span>
+        <span>👤 ${u.name}</span>
         <span>${u.time}</span>
       </div>
     `;
@@ -204,5 +205,6 @@ setInterval(load, 3000);
 
 </body>
 </html>
+
 
 
