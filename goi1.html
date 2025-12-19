@@ -169,30 +169,27 @@ async function load() {
   let zone2 = `<div class="zone2">`;
 
   if (data[1]) {
-    zone2 += `
-      <div class="zone2Item">
-        <div class="crown">👑</div>
-        <div class="rankNum">2</div>
-        <div>
-          <div class="name">${data[1].name}</div>
-          <div class="time">🔥 ${data[1].time}</div>
-        </div>
-      </div>
-    `;
-  }
+  zone2 += `
+    <div class="zone2Item">
+      <div class="crown silver">👑</div>
+      <div class="rankNum">2</div>
+      <div class="name">${data[1].name}</div>
+      <div class="time">🔥 ${data[1].time}</div>
+    </div>
+  `;
+}
 
-  if (data[2]) {
-    zone2 += `
-      <div class="zone2Item">
-        <div class="crown">👑</div>
-        <div class="rankNum">3</div>
-        <div>
-          <div class="name">${data[2].name}</div>
-          <div class="time">🔥 ${data[2].time}</div>
-        </div>
-      </div>
-    `;
-  }
+if (data[2]) {
+  zone2 += `
+    <div class="zone2Item">
+      <div class="crown silver">👑</div>
+      <div class="rankNum">3</div>
+      <div class="name">${data[2].name}</div>
+      <div class="time">🔥 ${data[2].time}</div>
+    </div>
+  `;
+}
+
 
   zone2 += `</div>`;
   root.innerHTML += zone2;
