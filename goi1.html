@@ -84,33 +84,36 @@ body {
 /* =========================
    ZONE 2 – TOP 2 & 3
 ========================= */
-.zone2 {
-  position: absolute;
-  top: 220px;
-  left: 50%;
-  transform: translateX(-50%);
+/* ===== ZONE 2 ROW ===== */
+.zone2Item {
   display: flex;
-  gap: 120px;
+  align-items: center;
+  gap: 12px;
+  white-space: nowrap;
 }
 
+/* Silver crown for 2 & 3 */
+.crown.silver {
+  font-size: 38px;
+  opacity: 0.85;
+  animation: none; /* no float */
+}
+
+/* Name single line */
 .zone2Item .name {
   font-size: 26px;
   font-weight: 800;
-  white-space: nowrap;
+  max-width: 220px;
   overflow: hidden;
   text-overflow: ellipsis;
-  max-width: 220px; /* adjust if needed */
+  white-space: nowrap;
 }
 
+/* Time single line */
 .zone2Item .time {
   white-space: nowrap;
 }
 
-
-.zone2Item .crown {
-  font-size: 40px;
-  opacity: 0.85;
-}
 
 /* =========================
    ZONE 3 – LIST
