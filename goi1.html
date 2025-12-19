@@ -70,7 +70,10 @@ body {
   transform: translateX(-50%);
   text-align: center;
 }
-
+  
+.zone1 .name {
+  white-space: nowrap;
+}
 .zone1Row {
   display: inline-flex;
   align-items: center;
@@ -90,11 +93,19 @@ body {
   gap: 120px;
 }
 
-.zone2Item {
-  display: flex;
-  align-items: center;
-  gap: 12px;
+.zone2Item .name {
+  font-size: 26px;
+  font-weight: 800;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 220px; /* adjust if needed */
 }
+
+.zone2Item .time {
+  white-space: nowrap;
+}
+
 
 .zone2Item .crown {
   font-size: 40px;
