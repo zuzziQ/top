@@ -95,13 +95,16 @@ body {
   font-weight: 600;
 }
 
-/* LIST */
+/* ===== LIST (NON TOP – BLACK) ===== */
 .item {
   display: flex;
   justify-content: space-between;
-  font-size: 24px;
-  margin-bottom: 6px;
+  font-size: 28px;
+  margin-bottom: 12px;
+  color: #000;        /* ✅ BLACK */
+  font-weight: 600;
 }
+
 </style>
 </head>
 
@@ -139,8 +142,8 @@ async function load() {
 
 
 
-  /* TOP 2 & 3 */
-  if (data[1] || data[2]) {
+   /* ===== TOP 2 & 3 (CHỈ HIỆN KHI TỒN TẠI) ===== */
+  if (data.length > 1) {
     let html = `<div class="row23">`;
 
     if (data[1]) {
@@ -151,10 +154,11 @@ async function load() {
             <div>${data[1].name}</div>
             <div>${data[1].time}</div>
           </div>
-        </div>`;
+        </div>
+      `;
     }
 
-    if (data[2]) {
+    if (data.length > 2 && data[2]) {
       html += `
         <div class="top3">
           <div class="medal bronze">3</div>
@@ -162,22 +166,25 @@ async function load() {
             <div>${data[2].name}</div>
             <div>${data[2].time}</div>
           </div>
-        </div>`;
+        </div>
+      `;
     }
 
     html += `</div>`;
     root.innerHTML += html;
   }
 
-  /* 4+ */
-  data.slice(3).forEach((u, i) => {
-    root.innerHTML += `
-      <div class="item">
-        <span>${i + 4}. ${u.name}</span>
-        <span>${u.time}</span>
-      </div>
-    `;
-  });
+  /* ===== LIST (TỪ TOP 4 – CHỮ ĐEN) ===== */
+  if (data.length > 3) {
+    data.slice(3).forEach(u => {
+      root.innerHTML += `
+        <div class="item">
+          <span>👤 ${u.name}</span>
+          <span>${u.time}</span>
+        </div>
+      `;
+    });
+  }
 }
 
 load();
