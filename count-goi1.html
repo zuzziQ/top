@@ -3,40 +3,52 @@
 <head>
 <meta charset="utf-8" />
 <style>
-@import url('https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@700;800&display=swap');
-
-body {
-  margin: 0;
-  background: transparent;
-  font-family: 'Be Vietnam Pro', sans-serif;
-}
-
-.box {
-  font-size: 48px;
-  font-weight: 800;
-  color: #000; /* ✅ BLACK */
+body { margin:0; background:transparent; font-family:Be Vietnam Pro,sans-serif; }
+.num { font-size:36px; font-weight:800; color:#000; }
+.flash { animation: pop .6s ease; }
+@keyframes pop {
+  0%{transform:scale(1)}
+  40%{transform:scale(1.15)}
+  100%{transform:scale(1)}
 }
 </style>
 </head>
 <body>
-<div class="box" id="count">0</div>
+<div class="num" id="count">0</div>
 
 <script>
 const API =
   "https://script.google.com/macros/s/AKfycbwgkMXvIQ7jmDtoc4TGya_5BTA8fbin4rmQMGWVeK-tVLMfo3gjdbAlyi79CaHwuMmW/exec";
 
-const GOI_NAME = "Gói 1";
+function animateCount(el, to, duration = 700) {
+  const from = Number(el.textContent) || 0;
+  if (from === to) return;
+
+  const start = performance.now();
+
+  function tick(now) {
+    const p = Math.min((now - start) / duration, 1);
+    el.textContent = Math.floor(from + (to - from) * p);
+    if (p < 1) requestAnimationFrame(tick);
+  }
+
+  el.classList.add("flash");
+  setTimeout(() => el.classList.remove("flash"), 600);
+
+  requestAnimationFrame(tick);
+}
 
 async function load() {
   const res = await fetch(API + "?type=count&t=" + Date.now());
-  const json = await res.json();
-
-  document.getElementById("count").innerText =
-    json.goi?.[GOI_NAME] ?? 0;
+  const data = await res.json();
+  animateCount(
+    document.getElementById("count"),
+    data.goi["Gói 1"] || 0
+  );
 }
 
 load();
-setInterval(load, 5000);
+setInterval(load, 3000);
 </script>
 </body>
 </html>
