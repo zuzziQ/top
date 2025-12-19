@@ -15,14 +15,14 @@ body {
 
 .container {
   width: 900px;
-  height: 700px;
+  height: 800px;
   position: relative;
 }
 
 /* ===== COMMON ===== */
 .rankNum {
-  width: 42px;
-  height: 42px;
+  width: 44px;
+  height: 44px;
   border-radius: 10px;
   background: rgba(255,255,255,0.25);
   display: flex;
@@ -30,6 +30,11 @@ body {
   justify-content: center;
   font-size: 24px;
   font-weight: 800;
+}
+
+.name {
+  font-weight: 800;
+  font-size: 26px;
 }
 
 .time {
@@ -40,15 +45,12 @@ body {
   padding: 5px 12px;
   border-radius: 999px;
   font-size: 18px;
-}
-
-.name {
-  font-weight: 800;
+  margin-top: 4px;
 }
 
 /* ===== CROWN ===== */
 .crown {
-  font-size: 52px;
+  font-size: 56px;
   animation: float 1.6s ease-in-out infinite;
 }
 
@@ -58,54 +60,53 @@ body {
   100% { transform: translateY(0); }
 }
 
-/* ===== TOP 1 ===== */
-.top1 {
+/* =========================
+   ZONE 1 – TOP 1 (CENTER)
+========================= */
+.zone1 {
   position: absolute;
-  top: 40px;
+  top: 60px;
   left: 50%;
   transform: translateX(-50%);
   text-align: center;
 }
 
-.top1Row {
-  display: flex;
+.zone1Row {
+  display: inline-flex;
   align-items: center;
-  gap: 12px;
+  gap: 14px;
   margin-top: 6px;
 }
 
-.top1 .name {
-  font-size: 36px;
+/* =========================
+   ZONE 2 – TOP 2 & 3
+========================= */
+.zone2 {
+  position: absolute;
+  top: 220px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  gap: 120px;
 }
 
-/* ===== TOP 2 ===== */
-.top2 {
-  position: absolute;
-  top: 180px;
-  left: 40px;
+.zone2Item {
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 12px;
 }
 
-.top2 .name { font-size: 24px; }
-
-/* ===== TOP 3 ===== */
-.top3 {
-  position: absolute;
-  top: 240px;
-  left: 40px;
-  display: flex;
-  align-items: center;
-  gap: 10px;
+.zone2Item .crown {
+  font-size: 40px;
+  opacity: 0.85;
 }
 
-.top3 .name { font-size: 24px; }
-
-/* ===== LIST ===== */
-.list {
+/* =========================
+   ZONE 3 – LIST
+========================= */
+.zone3 {
   position: absolute;
-  top: 420px; /* HUGE GAP BELOW TOP 3 */
+  top: 520px; /* VERY LARGE GAP */
   left: 0;
   width: 100%;
 }
@@ -139,11 +140,11 @@ async function load() {
   root.innerHTML = "";
   if (!data.length) return;
 
-  /* TOP 1 */
+  /* ===== ZONE 1 ===== */
   root.innerHTML += `
-    <div class="top1">
+    <div class="zone1">
       <div class="crown">👑</div>
-      <div class="top1Row">
+      <div class="zone1Row">
         <div class="rankNum">1</div>
         <div>
           <div class="name">${data[0].name}</div>
@@ -153,39 +154,43 @@ async function load() {
     </div>
   `;
 
-  /* TOP 2 */
+  /* ===== ZONE 2 ===== */
+  let zone2 = `<div class="zone2">`;
+
   if (data[1]) {
-    root.innerHTML += `
-      <div class="top2">
+    zone2 += `
+      <div class="zone2Item">
+        <div class="crown">👑</div>
         <div class="rankNum">2</div>
         <div>
           <div class="name">${data[1].name}</div>
           <div class="time">🔥 ${data[1].time}</div>
         </div>
-        <div class="crown">👑</div>
       </div>
     `;
   }
 
-  /* TOP 3 */
   if (data[2]) {
-    root.innerHTML += `
-      <div class="top3">
+    zone2 += `
+      <div class="zone2Item">
+        <div class="crown">👑</div>
         <div class="rankNum">3</div>
         <div>
           <div class="name">${data[2].name}</div>
           <div class="time">🔥 ${data[2].time}</div>
         </div>
-        <div class="crown">👑</div>
       </div>
     `;
   }
 
-  /* LIST 4–6 */
-  root.innerHTML += `<div class="list">`;
+  zone2 += `</div>`;
+  root.innerHTML += zone2;
+
+  /* ===== ZONE 3 ===== */
+  let zone3 = `<div class="zone3">`;
 
   data.slice(3, 6).forEach((u, i) => {
-    root.innerHTML += `
+    zone3 += `
       <div class="item">
         <span>${i + 4}. ${u.name}</span>
         <span>${u.time}</span>
@@ -193,7 +198,8 @@ async function load() {
     `;
   });
 
-  root.innerHTML += `</div>`;
+  zone3 += `</div>`;
+  root.innerHTML += zone3;
 }
 
 load();
