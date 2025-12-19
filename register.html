@@ -10,9 +10,9 @@ body {
   margin: 0;
   background: transparent;
   font-family: 'Be Vietnam Pro', sans-serif;
-  color: #fff;
 }
 
+/* ===== CONTAINER ===== */
 .container {
   width: 700px;
 }
@@ -20,13 +20,13 @@ body {
 /* ===== TOP 1 ===== */
 .top1 {
   background: linear-gradient(135deg, #e53935, #ff6f60);
-  border-radius: 22px;
-  padding: 20px;
-  margin-bottom: 16px;
+  border-radius: 26px;
+  padding: 26px 28px;
+  margin-bottom: 20px;
   display: flex;
   align-items: center;
-  justify-content: center;
-  gap: 14px;
+  gap: 18px;
+  color: #fff;
 }
 
 .crown {
@@ -35,42 +35,56 @@ body {
 }
 
 .top1 .name {
-  font-size: 40px;
+  font-size: 42px;       /* 🔥 TO */
   font-weight: 800;
+  line-height: 1.1;
 }
 
 .top1 .time {
-  font-size: 22px;
+  font-size: 26px;       /* 🔥 TO */
+  margin-top: 6px;
+  opacity: 0.95;
 }
 
 /* ===== TOP 2 & 3 ===== */
 .row23 {
   display: flex;
   justify-content: center;
+  gap: 16px;
+  margin-bottom: 20px;
+}
+
+.top2, .top3 {
+  width: 48%;
+  border-radius: 20px;
+  padding: 18px;
+  display: flex;
+  align-items: center;
   gap: 14px;
-  margin-bottom: 16px;
+  color: #fff;
 }
 
 .top2 {
-  width: 48%;
   background: linear-gradient(135deg, #90caf9, #42a5f5);
-  border-radius: 18px;
-  padding: 16px;
-  display: flex;
-  align-items: center;
-  gap: 12px;
 }
 
 .top3 {
-  width: 48%;
   background: linear-gradient(135deg, #ffcc80, #fb8c00);
-  border-radius: 18px;
-  padding: 16px;
-  display: flex;
-  align-items: center;
-  gap: 12px;
 }
 
+.top2 .name,
+.top3 .name {
+  font-size: 26px;
+  font-weight: 800;
+}
+
+.top2 .time,
+.top3 .time {
+  font-size: 20px;
+  opacity: 0.95;
+}
+
+/* MEDAL */
 .medal {
   width: 52px;
   height: 52px;
@@ -85,15 +99,17 @@ body {
 .silver { background: #cfd8dc; color: #000; }
 .bronze { background: #e0a96d; color: #000; }
 
-/* ===== LIST ===== */
+/* ===== REST LIST (BLACK TEXT) ===== */
 .item {
   display: flex;
   justify-content: space-between;
-  font-size: 24px;
-  margin-bottom: 6px;
-  opacity: 0.9;
+  font-size: 28px;       /* 🔥 TO */
+  margin-bottom: 12px;
+  color: #000;           /* ✅ BLACK TEXT */
+  font-weight: 600;
 }
 </style>
+
 </head>
 
 <body>
@@ -147,10 +163,10 @@ async function load() {
       html += `
         <div class="top2">
           <div class="medal silver">2</div>
-          <div>
-            <div>${pinned[1].name}</div>
-            <div>${pinned[1].time}</div>
-          </div>
+            <div>
+              <div class="name">${pinned[1].name}</div>
+              <div class="time">${pinned[1].time}</div>
+            </div>
         </div>
       `;
     }
@@ -159,10 +175,10 @@ async function load() {
       html += `
         <div class="top3">
           <div class="medal bronze">3</div>
-          <div>
-            <div>${pinned[2].name}</div>
-            <div>${pinned[2].time}</div>
-          </div>
+            <div>
+              <div class="name">${pinned[2].name}</div>
+              <div class="time">${pinned[2].time}</div>
+            </div>
         </div>
       `;
     }
@@ -188,4 +204,5 @@ setInterval(load, 3000);
 
 </body>
 </html>
+
 
