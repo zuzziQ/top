@@ -15,13 +15,41 @@ body {
 
 .container {
   width: 900px;
-  margin: 0 auto;
+  height: 700px;
+  position: relative;
 }
 
-/* ===== CROWN FLOAT ===== */
+/* ===== COMMON ===== */
+.rankNum {
+  width: 42px;
+  height: 42px;
+  border-radius: 10px;
+  background: rgba(255,255,255,0.25);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 24px;
+  font-weight: 800;
+}
+
+.time {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: rgba(0,0,0,0.4);
+  padding: 5px 12px;
+  border-radius: 999px;
+  font-size: 18px;
+}
+
+.name {
+  font-weight: 800;
+}
+
+/* ===== CROWN ===== */
 .crown {
-  font-size: 64px;
-  animation: float 1.5s ease-in-out infinite;
+  font-size: 52px;
+  animation: float 1.6s ease-in-out infinite;
 }
 
 @keyframes float {
@@ -30,89 +58,62 @@ body {
   100% { transform: translateY(0); }
 }
 
-/* ===== PODIUM ===== */
-.podium {
+/* ===== TOP 1 ===== */
+.top1 {
+  position: absolute;
+  top: 40px;
+  left: 50%;
+  transform: translateX(-50%);
   text-align: center;
 }
 
-/* ===== TOP 1 ===== */
-.top1 {
-  margin-bottom: 40px;
-}
-
 .top1Row {
-  display: inline-flex;
-  align-items: center;
-  gap: 14px;
-  margin-top: 8px;
-}
-
-.rankNum {
-  width: 48px;
-  height: 48px;
-  border-radius: 12px;
-  background: rgba(255,255,255,0.2);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 28px;
-  font-weight: 800;
-}
-
-.top1 .name {
-  font-size: 40px;
-  font-weight: 800;
-  text-align: left;
-}
-
-.time {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  background: rgba(0,0,0,0.35);
-  padding: 6px 14px;
-  border-radius: 999px;
-  font-size: 22px;
-  margin-top: 4px;
-}
-
-/* ===== TOP 2 & 3 ===== */
-.row23 {
-  display: flex;
-  justify-content: center;
-  gap: 120px;
-  margin-bottom: 140px; /* HUGE GAP before rank 4 */
-}
-
-.rankSmall {
   display: flex;
   align-items: center;
   gap: 12px;
+  margin-top: 6px;
 }
 
-.rankSmall .crown {
-  font-size: 40px;
-  opacity: 0.85;
+.top1 .name {
+  font-size: 36px;
 }
 
-.rankSmall .name {
-  font-size: 26px;
-  font-weight: 700;
+/* ===== TOP 2 ===== */
+.top2 {
+  position: absolute;
+  top: 180px;
+  left: 40px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
 }
 
-.rankSmall .time {
-  font-size: 20px;
+.top2 .name { font-size: 24px; }
+
+/* ===== TOP 3 ===== */
+.top3 {
+  position: absolute;
+  top: 240px;
+  left: 40px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
 }
 
-/* ===== LIST 4–6 ===== */
+.top3 .name { font-size: 24px; }
+
+/* ===== LIST ===== */
 .list {
+  position: absolute;
+  top: 420px; /* HUGE GAP BELOW TOP 3 */
+  left: 0;
   width: 100%;
 }
 
 .item {
   display: flex;
   justify-content: space-between;
-  font-size: 24px;
+  font-size: 22px;
   margin-bottom: 8px;
   opacity: 0.9;
 }
@@ -136,10 +137,7 @@ async function load() {
 
   const root = document.getElementById("root");
   root.innerHTML = "";
-
   if (!data.length) return;
-
-  root.innerHTML += `<div class="podium">`;
 
   /* TOP 1 */
   root.innerHTML += `
@@ -155,12 +153,10 @@ async function load() {
     </div>
   `;
 
-  /* TOP 2 & 3 */
-  root.innerHTML += `<div class="row23">`;
-
+  /* TOP 2 */
   if (data[1]) {
     root.innerHTML += `
-      <div class="rankSmall">
+      <div class="top2">
         <div class="rankNum">2</div>
         <div>
           <div class="name">${data[1].name}</div>
@@ -171,9 +167,10 @@ async function load() {
     `;
   }
 
+  /* TOP 3 */
   if (data[2]) {
     root.innerHTML += `
-      <div class="rankSmall">
+      <div class="top3">
         <div class="rankNum">3</div>
         <div>
           <div class="name">${data[2].name}</div>
@@ -183,8 +180,6 @@ async function load() {
       </div>
     `;
   }
-
-  root.innerHTML += `</div></div>`;
 
   /* LIST 4–6 */
   root.innerHTML += `<div class="list">`;
