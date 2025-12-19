@@ -127,62 +127,62 @@ async function load() {
     return;
   }
 
+  /* PODIUM */
+  root.innerHTML += `<div class="podium">`;
+
   /* TOP 1 */
- /* PODIUM */
-root.innerHTML += `<div class="podium">`;
-
-/* TOP 1 */
-root.innerHTML += `
-  <div class="top1">
-    <div class="crown">👑</div>
-    <div class="name">${data[0].name}</div>
-    <div class="time">🔥 ${data[0].time}</div>
-  </div>
-`;
-
-/* TOP 2 */
-if (data[1]) {
   root.innerHTML += `
-    <div class="rankBox">
-      <div class="rankNum">2</div>
-      <div>
-        <div class="name">${data[1].name}</div>
-        <div class="time">🔥 ${data[1].time}</div>
-      </div>
+    <div class="top1">
+      <div class="crown">👑</div>
+      <div class="name">${data[0].name}</div>
+      <div class="time">🔥 ${data[0].time}</div>
     </div>
   `;
+
+  /* TOP 2 */
+  if (data[1]) {
+    root.innerHTML += `
+      <div class="rankBox">
+        <div class="rankNum">2</div>
+        <div>
+          <div class="name">${data[1].name}</div>
+          <div class="time">🔥 ${data[1].time}</div>
+        </div>
+      </div>
+    `;
+  }
+
+  /* TOP 3 */
+  if (data[2]) {
+    root.innerHTML += `
+      <div class="rankBox">
+        <div class="rankNum">3</div>
+        <div>
+          <div class="name">${data[2].name}</div>
+          <div class="time">🔥 ${data[2].time}</div>
+        </div>
+      </div>
+    `;
+  }
+
+  root.innerHTML += `</div>`; // close podium
+
+  /* LIST 4–6 */
+  root.innerHTML += `<div class="list">`;
+
+  data.slice(3, 6).forEach((u, i) => {
+    root.innerHTML += `
+      <div class="item">
+        <span>${i + 4}. ${u.name}</span>
+        <span>${u.time}</span>
+      </div>
+    `;
+  });
+
+  root.innerHTML += `</div>`; // close list
 }
 
-/* TOP 3 */
-if (data[2]) {
-  root.innerHTML += `
-    <div class="rankBox">
-      <div class="rankNum">3</div>
-      <div>
-        <div class="name">${data[2].name}</div>
-        <div class="time">🔥 ${data[2].time}</div>
-      </div>
-    </div>
-  `;
-}
-
-root.innerHTML += `</div>`;
-
-/* LIST 4–6 */
-root.innerHTML += `<div class="list">`;
-
-data.slice(3, 6).forEach((u, i) => {
-  root.innerHTML += `
-    <div class="item">
-      <span>${i + 4}. ${u.name}</span>
-      <span>${u.time}</span>
-    </div>
-  `;
-});
-
-root.innerHTML += `</div>`;
-
-
+/* ✅ CALL AFTER FUNCTION IS CLOSED */
 load();
 setInterval(load, 3000);
 </script>
