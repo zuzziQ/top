@@ -2,109 +2,83 @@
 <html lang="vi">
 <head>
 <meta charset="utf-8" />
-
 <style>
-@import url('https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@500;700;800&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@600;800&display=swap');
 
 body {
   margin: 0;
   background: transparent;
   font-family: 'Be Vietnam Pro', sans-serif;
-  color: #fff;
 }
 
-.container {
-  width: 700px;
-}
+.container { width: 720px; }
 
-/* MEDALS */
-.medal {
-  width: 56px;
-  height: 56px;
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-weight: 800;
-  font-size: 28px;
-  margin-right: 14px;
-}
-
-.gold { background: #e53935; }
-.silver { background: #cfd8dc; color: #000; }
-.bronze { background: #e0a96d; color: #000; }
-
-/* PODIUM */
+/* ===== TOP ===== */
 .top1 {
-  background: linear-gradient(135deg, #e53935, #ff6f60);
-  border-radius: 22px;
-  padding: 20px;
-  margin-bottom: 16px;
+  background: linear-gradient(135deg,#e53935,#ff6f60);
+  border-radius: 26px;
+  padding: 28px;
   display: flex;
+  gap: 18px;
   align-items: center;
-  justify-content: center;
-  gap: 14px;
-}
-.crown {
-  font-size: 48px;
-  line-height: 1;
-  margin-right: 6px;
-  animation: crownFloat 1.4s ease-in-out infinite;
+  margin-bottom: 18px;
 }
 
-@keyframes crownFloat {
-  0%   { transform: translateY(0) scale(1); }
-  50%  { transform: translateY(-8px) scale(1.05); }
-  100% { transform: translateY(0) scale(1); }
+.crown { font-size: 48px; animation: float 1.5s infinite ease-in-out; }
+
+@keyframes float {
+  0%{transform:translateY(0)}
+  50%{transform:translateY(-6px)}
+  100%{transform:translateY(0)}
 }
 
-.top1 .name { font-size: 40px; font-weight: 800; }
-.top1 .time { font-size: 22px; }
+.name { font-size: 42px; font-weight: 800; color:#fff }
+.time { font-size: 26px; color:#fff }
 
+/* ===== TOP 2-3 ===== */
 .row23 {
   display: flex;
-  justify-content: center;
-  gap: 14px;
-  margin-bottom: 16px;
+  gap: 16px;
+  margin-bottom: 50px;
 }
 
-.top2 {
-  width: 48%;
-  background: linear-gradient(135deg, #90caf9, #42a5f5);
+.box23 {
+  flex:1;
   border-radius: 18px;
   padding: 16px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 12px;
+  display:flex;
+  align-items:center;
+  gap:12px;
+  font-size:22px;
 }
 
-.top3 {
-  width: 48%;
-  background: linear-gradient(135deg, #ffcc80, #fb8c00);
-  border-radius: 18px;
-  padding: 16px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 12px;
-}
-  
-.top2 div, .top3 div {
-  font-size: 22px;
-  font-weight: 600;
+.box2 { background:#90caf9 }
+.box3 { background:#ffcc80 }
+
+.rank {
+  width:44px;height:44px;border-radius:50%;
+  background:#fff;
+  display:flex;align-items:center;justify-content:center;
+  font-weight:800;
 }
 
-/* ===== LIST (NON TOP – BLACK) ===== */
+/* ===== LIST ===== */
 .item {
-  display: flex;
-  justify-content: space-between;
-  font-size: 28px;
-  margin-bottom: 12px;
-  color: #000;        /* ✅ BLACK */
-  font-weight: 600;
+  display:flex;
+  justify-content:space-between;
+  font-size:26px;
+  margin-bottom:10px;
+  color:#000;
 }
 
+.highlight {
+  animation: blink 1s ease-in-out infinite alternate;
+}
+
+@keyframes blink {
+  from { opacity:1 }
+  to { opacity:0.5 }
+}
 </style>
 </head>
 
@@ -112,83 +86,68 @@ body {
 <div class="container" id="root"></div>
 
 <script>
-const API =
-  "https://script.google.com/macros/s/AKfycbwgkMXvIQ7jmDtoc4TGya_5BTA8fbin4rmQMGWVeK-tVLMfo3gjdbAlyi79CaHwuMmW/exec";
+const API = "https://script.google.com/macros/s/AKfycbyRGQUeRDYjMrNAr6xwqQybpQ5BA3LJ_b0ccY_m_kvgC29v_l0K7B6PE5X8pBEvaGeV/exec?type=orders";
+const GOI = "Gói 1";
+let lastTopTime = null;
+
+const parse = t => new Date(t).getTime();
+const fmt = t => new Date(t).toLocaleTimeString("vi-VN");
 
 async function load() {
-  const res = await fetch(API + "?t=" + Date.now());
+  const res = await fetch(API + "&t=" + Date.now());
   const json = await res.json();
-
-  // ✅ FILTER ONLY GÓI 1
-  const data = json
-    .filter(r => r.goi === "Gói 1")
-    .sort((a, b) => a.time.localeCompare(b.time));
+  const data = (json[GOI] || []).sort((a,b)=>parse(a.time)-parse(b.time));
 
   const root = document.getElementById("root");
   root.innerHTML = "";
-
   if (!data.length) return;
 
-  /* TOP 1 */
+  const isNew = lastTopTime && parse(data[0].time) > lastTopTime;
+  lastTopTime = parse(data[0].time);
+
   root.innerHTML += `
-    <div class="top1">
+    <div class="top1 ${isNew?'highlight':''}">
       <div class="crown">👑</div>
       <div>
         <div class="name">${data[0].name}</div>
-        <div class="time">${data[0].time}</div>
+        <div class="time">🔥 ${fmt(data[0].time)}</div>
       </div>
     </div>
   `;
 
-
-
-   /* ===== TOP 2 & 3 (CHỈ HIỆN KHI TỒN TẠI) ===== */
-  if (data.length > 1) {
-    let html = `<div class="row23">`;
-
-    if (data[1]) {
-      html += `
-        <div class="top2">
-          <div class="medal silver">2</div>
-          <div>
-            <div>${data[1].name}</div>
-            <div>${data[1].time}</div>
-          </div>
+  if (data.length >= 2) {
+    let row = `<div class="row23">`;
+    if (data[1]) row += `
+      <div class="box23 box2">
+        <div class="rank">2</div>
+        <div>
+          <div>${data[1].name}</div>
+          <div>🔥 ${fmt(data[1].time)}</div>
         </div>
-      `;
-    }
-
-    if (data.length > 2 && data[2]) {
-      html += `
-        <div class="top3">
-          <div class="medal bronze">3</div>
-          <div>
-            <div>${data[2].name}</div>
-            <div>${data[2].time}</div>
-          </div>
+      </div>`;
+    if (data[2]) row += `
+      <div class="box23 box3">
+        <div class="rank">3</div>
+        <div>
+          <div>${data[2].name}</div>
+          <div>🔥 ${fmt(data[2].time)}</div>
         </div>
-      `;
-    }
-
-    html += `</div>`;
-    root.innerHTML += html;
+      </div>`;
+    row += `</div>`;
+    root.innerHTML += row;
   }
 
-  /* ===== LIST (TỪ TOP 4 – CHỮ ĐEN) ===== */
-  if (data.length > 3) {
-    data.slice(3).forEach(u => {
-      root.innerHTML += `
-        <div class="item">
-          <span>👤 ${u.name}</span>
-          <span>${u.time}</span>
-        </div>
-      `;
-    });
-  }
+  data.slice(3).forEach(u=>{
+    root.innerHTML += `
+      <div class="item">
+        <span>👤 ${u.name}</span>
+        <span>${fmt(u.time)}</span>
+      </div>`;
+  });
 }
 
 load();
-setInterval(load, 3000);
+setInterval(load,3000);
 </script>
 </body>
 </html>
