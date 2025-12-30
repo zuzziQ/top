@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Deneb Gantt Chart</title>
+<script src="https://unpkg.com/vega@5"></script>
+<script src="https://unpkg.com/vega-lite@5"></script>
+<script src="https://unpkg.com/vega-embed@6"></script>
+<style>
+  body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    margin: 0;
+    padding: 20px;
+    background-color: #f5f5f5;
+  }
+  .container {
+    max-width: 1200px;
+    margin: 0 auto;
+    background: white;
+    padding: 30px;
+    border-radius: 10px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+  }
+  h1 {
+    color: #333;
+    margin-bottom: 10px;
+  }
+  .description {
+    color: #666;
+    margin-bottom: 30px;
+  }
+  #vis {
+    width: 100%;
+  }
+</style>
+</head>
+<body>
+  <div class="container">
+    <h1>Project Gantt Chart</h1>
+    <p class="description">Interactive Gantt chart visualization using Deneb (Vega-Lite)</p>
+    <div id="vis"></div>
+  </div>
+
+  <script type="text/javascript">
+    // Deneb Vega-Lite specification for Gantt Chart
+    const spec = {
+      "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
+      "width": "container",
+      "height": 400,
+      "data": {
+        "values": [
+          {
+            "task": "Planning",
+            "start": "2025-01-01",
+            "end": "2025-01-15",
+            "status": "Completed",
+            "assignee": "Team A"
+          },
+          {
+            "task": "Design",
+            "start": "2025-01-10",
+            "end": "2025-01-30",
+            "status": "Completed",
+            "assignee": "Team B"
+          },
+          {
+            "task": "Development",
+            "start": "2025-01-25",
+            "end": "2025-03-15",
+            "status": "In Progress",
+            "assignee": "Team C"
+          },
+          {
+            "task": "Testing",
+            "start": "2025-03-01",
+            "end": "2025-03-31",
+            "status": "Pending",
+            "assignee": "Team D"
+          },
+          {
+            "task": "Deployment",
+            "start": "2025-03-25",
+            "end": "2025-04-10",
+            "status": "Pending",
+            "assignee": "Team A"
+          },
+          {
+            "task": "Documentation",
+            "start": "2025-02-15",
+            "end": "2025-04-05",
+            "status": "In Progress",
+            "assignee": "Team B"
+          }
+        ]
+      },
+      "transform": [
+        {
+          "calculate": "toDate(datum.start)",
+          "as": "startDate"
+        },
+        {
+          "calculate": "toDate(datum.end)",
+          "as": "endDate"
+        },
+        {
+          "calculate": "datum.endDate - datum.startDate",
+          "as": "duration"
+        }
+      ],
+      "layer": [
+        {
+          "mark": {
+            "type": "bar",
+            "cornerRadius": 4,
+            "height": 20
+          },
+          "encoding": {
+            "x": {
+              "field": "startDate",
+              "type": "temporal",
+              "title": "Timeline",
+              "axis": {
+                "format": "%b %d",
+                "labelAngle": -45,
+                "grid": true
+              }
+            },
+            "x2": {
+              "field": "endDate"
+            },
+            "y": {
+              "field": "task",
+              "type": "nominal",
+              "title": "Tasks",
+              "sort": null,
+              "axis": {
+                "labelLimit": 150,
+                "labelFontSize": 12
+              }
+            },
+            "color": {
+              "field": "status",
+              "type": "nominal",
+              "scale": {
+                "domain": ["Completed", "In Progress", "Pending"],
+                "range": ["#4CAF50", "#2196F3", "#FFC107"]
+              },
+              "legend": {
+                "title": "Status",
+                "orient": "right"
+              }
+            },
+            "tooltip": [
+              {
+                "field": "task",
+                "type": "nominal",
+                "title": "Task"
+              },
+              {
+                "field": "assignee",
+                "type": "nominal",
+                "title": "Assignee"
+              },
+              {
+                "field": "start",
+                "type": "nominal",
+                "title": "Start Date"
+              },
+              {
+                "field": "end",
+                "type": "nominal",
+                "title": "End Date"
+              },
+              {
+                "field": "status",
+                "type": "nominal",
+                "title": "Status"
+              }
+            ]
+          }
+        },
+        {
+          "mark": {
+            "type": "text",
+            "align": "left",
+            "dx": 5,
+            "fontSize": 10
+          },
+          "encoding": {
+            "x": {
+              "field": "startDate",
+              "type": "temporal"
+            },
+            "y": {
+              "field": "task",
+              "type": "nominal",
+              "sort": null
+            },
+            "text": {
+              "field": "assignee",
+              "type": "nominal"
+            },
+            "opacity": {
+              "value": 0.7
+            }
+          }
+        }
+      ],
+      "config": {
+        "view": {
+          "stroke": "transparent"
+        },
+        "axis": {
+          "domainColor": "#ddd",
+          "gridColor": "#f0f0f0",
+          "tickColor": "#ddd"
+        }
+      }
+    };
+
+    // Embed the visualization
+    vegaEmbed('#vis', spec, {
+      "actions": {
+        "export": true,
+        "source": false,
+        "compiled": false,
+        "editor": true
+      }
+    }).catch(console.error);
+  </script>
+</body>
+</html>

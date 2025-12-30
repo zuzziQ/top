@@ -1,0 +1,232 @@
+{
+  "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
+  "description": "Gantt Chart for Project Management - Deneb Specification",
+  "width": 800,
+  "height": 400,
+  "data": {
+    "name": "dataset"
+  },
+  "transform": [
+    {
+      "calculate": "toDate(datum.StartDate)",
+      "as": "start"
+    },
+    {
+      "calculate": "toDate(datum.EndDate)",
+      "as": "end"
+    },
+    {
+      "calculate": "datum.end - datum.start",
+      "as": "duration"
+    }
+  ],
+  "layer": [
+    {
+      "mark": {
+        "type": "bar",
+        "cornerRadius": 4,
+        "height": {
+          "band": 0.7
+        }
+      },
+      "encoding": {
+        "x": {
+          "field": "start",
+          "type": "temporal",
+          "title": "Timeline",
+          "axis": {
+            "format": "%b %d, %Y",
+            "labelAngle": -45,
+            "grid": true,
+            "gridDash": [3, 3],
+            "gridOpacity": 0.5
+          }
+        },
+        "x2": {
+          "field": "end"
+        },
+        "y": {
+          "field": "Task",
+          "type": "nominal",
+          "title": "Project Tasks",
+          "sort": null,
+          "axis": {
+            "labelLimit": 200,
+            "labelFontSize": 11,
+            "labelPadding": 10
+          }
+        },
+        "color": {
+          "field": "Status",
+          "type": "nominal",
+          "scale": {
+            "domain": [
+              "Not Started",
+              "In Progress",
+              "Completed",
+              "On Hold",
+              "Delayed"
+            ],
+            "range": [
+              "#9E9E9E",
+              "#2196F3",
+              "#4CAF50",
+              "#FF9800",
+              "#F44336"
+            ]
+          },
+          "legend": {
+            "title": "Task Status",
+            "orient": "right",
+            "labelFontSize": 11,
+            "titleFontSize": 12,
+            "titleFontWeight": "bold"
+          }
+        },
+        "tooltip": [
+          {
+            "field": "Task",
+            "type": "nominal",
+            "title": "Task Name"
+          },
+          {
+            "field": "Assignee",
+            "type": "nominal",
+            "title": "Assigned To"
+          },
+          {
+            "field": "StartDate",
+            "type": "nominal",
+            "title": "Start Date"
+          },
+          {
+            "field": "EndDate",
+            "type": "nominal",
+            "title": "End Date"
+          },
+          {
+            "field": "duration",
+            "type": "quantitative",
+            "title": "Duration (ms)",
+            "format": ","
+          },
+          {
+            "field": "Status",
+            "type": "nominal",
+            "title": "Status"
+          },
+          {
+            "field": "Progress",
+            "type": "quantitative",
+            "title": "Progress (%)",
+            "format": ".0f"
+          }
+        ],
+        "opacity": {
+          "condition": {
+            "param": "hover",
+            "value": 1
+          },
+          "value": 0.85
+        }
+      }
+    },
+    {
+      "mark": {
+        "type": "text",
+        "align": "left",
+        "dx": 5,
+        "fontSize": 9,
+        "fontWeight": "normal"
+      },
+      "encoding": {
+        "x": {
+          "field": "start",
+          "type": "temporal"
+        },
+        "y": {
+          "field": "Task",
+          "type": "nominal",
+          "sort": null
+        },
+        "text": {
+          "field": "Assignee",
+          "type": "nominal"
+        },
+        "opacity": {
+          "value": 0.6
+        },
+        "color": {
+          "value": "#000000"
+        }
+      }
+    },
+    {
+      "mark": {
+        "type": "rule",
+        "strokeWidth": 2,
+        "strokeDash": [5, 5],
+        "color": "#E91E63"
+      },
+      "encoding": {
+        "x": {
+          "datum": {
+            "expr": "now()"
+          },
+          "type": "temporal"
+        }
+      }
+    },
+    {
+      "mark": {
+        "type": "text",
+        "align": "left",
+        "dx": 5,
+        "dy": -5,
+        "fontSize": 10,
+        "fontWeight": "bold",
+        "color": "#E91E63"
+      },
+      "encoding": {
+        "x": {
+          "datum": {
+            "expr": "now()"
+          },
+          "type": "temporal"
+        },
+        "y": {
+          "value": 0
+        },
+        "text": {
+          "value": "Today"
+        }
+      }
+    }
+  ],
+  "params": [
+    {
+      "name": "hover",
+      "select": {
+        "type": "point",
+        "on": "mouseover"
+      }
+    }
+  ],
+  "config": {
+    "view": {
+      "stroke": "transparent",
+      "continuousWidth": 800,
+      "continuousHeight": 400
+    },
+    "axis": {
+      "domainColor": "#cccccc",
+      "gridColor": "#e0e0e0",
+      "tickColor": "#cccccc",
+      "labelColor": "#333333",
+      "titleColor": "#333333",
+      "titleFontWeight": "bold",
+      "titleFontSize": 13
+    },
+    "background": "#ffffff"
+  }
+}
